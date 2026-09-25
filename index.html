@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <title>Campus Event Platform</title>
+
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+ 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: #f7f9fc;
+      color: #14213d;
+      font-family: "Inter", "Noto Sans Khmer", sans-serif;
+      overflow-x: hidden;
+    }
+
+    #english,
+    #khmer {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .khmer {
+      display: none;
+    }
+
+    body:has(#khmer:checked) .english {
+      display: none;
+    }
+
+    body:has(#khmer:checked) .khmer {
+      display: inline;
+    }
+
+
+    #menu {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #sidebar {
+      transform: translateX(-110%);
+      transition: transform 0.25s ease;
+    }
+
+    body:has(#menu:checked) #sidebar {
+      transform: translateX(0);
+    }
+
+    #overlay {
+      display: none;
+    }
+
+    body:has(#menu:checked) #overlay {
+      display: block;
+    }
+
+    @media (min-width: 768px) {
+      #sidebar {
+        transform: translateX(0);
+        position: sticky;
+      }
+
+      #overlay {
+        display: none !important;
+      }
+    }
+
+ 
+    .view-panel {
+      display: none;
+    }
+
+    #view-home {
+      display: block;
+    }
+
+    :target#view-events { display: block; }
+    :target#view-events ~ #view-home { display: none; }
+
+    :target#view-myevents { display: block; }
+    :target#view-myevents ~ #view-home { display: none; }
+
+    :target#view-add-event { display: block; }
+    :target#view-add-event ~ #view-home { display: none; }
+
+    :target#view-admin-users { display: block; }
+    :target#view-admin-users ~ #view-home { display: none; }
+
+    :target#view-login { display: block; }
+    :target#view-login ~ #view-home { display: none; }
+
+  
+    .modal-backdrop {
+      display: none;
+    }
+
+    .modal-backdrop:target {
+      display: flex;
+    }
+
+
+    .campus-image {
+      background:
+        linear-gradient(
+          90deg,
+          rgba(2, 47, 112, 0.92),
+          rgba(2, 66, 145, 0.65),
+          rgba(2, 66, 145, 0.18)
+        ),
+        url("./img/Rectangle\ 87.png")
+        center / cover no-repeat;
+    }
+
+    .event-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .event-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 30px rgba(0, 40, 100, 0.12);
+    }
+
+    #hero-carousel.hero-slide-change {
+      animation: hero-slide-fade 0.7s ease;
+    }
+
+    @keyframes hero-slide-fade {
+      0% { opacity: 0.72; }
+      100% { opacity: 1; }
+    }
+
+    .blue-button {
+      background: #0052cc;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .blue-button:hover {
+      background: #0043a8;
+      transform: translateY(-1px);
+    }
+
+    .sidebar-link {
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .sidebar-link:hover {
+      background: #eef5ff;
+      color: #0052cc;
+    }
+
+    .search-box:focus {
+      background: white;
+      border-color: #75a9ff;
+      box-shadow: 0 0 0 3px rgba(7, 93, 224, 0.08);
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    table {
+      display: block;
+      overflow-x: auto;
+    }
+
+   
+    @media (max-width: 380px) {
+      #brand-word {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <input type="radio" name="language" id="english" checked>
+  <input type="radio" name="language" id="khmer">
+  <input type="checkbox" id="menu">
+
+  <div class="min-h-screen flex flex-col">
+
+ 
+    <header class="h-[68px] sm:h-[76px] bg-white border-b border-gray-200 sticky top-0 z-50">
+      <div class="h-full px-3 sm:px-6 lg:px-8 flex items-center gap-2 sm:gap-4">
+
+        <label for="menu" class="md:hidden cursor-pointer p-2 rounded-lg hover:bg-gray-100 shrink-0">
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none">
+            <path d="M4 6H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </label>
+
+        <a href="#" class="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-blue-600 flex items-center justify-center shadow-sm shrink-0">
+            <svg width="22" height="22" class="sm:w-[27px] sm:h-[27px]" viewBox="0 0 24 24" fill="none">
+              <path d="M3 9.2L12 5L21 9.2L12 13L3 9.2Z" fill="white" />
+              <path d="M6 11.2V15C6 16.8 8.7 18.5 12 18.5C15.3 18.5 18 16.8 18 15V11.2" stroke="white" stroke-width="1.7" stroke-linecap="round" />
+              <path d="M21 9.5V14" stroke="white" stroke-width="1.7" stroke-linecap="round" />
+            </svg>
+          </div>
+          <span id="brand-word" class="text-lg sm:text-xl lg:text-2xl font-bold text-[#14213d] whitespace-nowrap">Campus Event</span>
+        </a>
+
+        <div class="hidden md:block flex-1 max-w-xl mx-auto">
+          <div class="relative">
+            <svg class="absolute left-4 inset-y-0 my-auto text-gray-400 pointer-events-none" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" />
+              <path d="M20 20L16 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            <input type="text" placeholder="Search events..." class="search-box w-full h-11 pl-11 pr-5 rounded-full bg-blue-50 border border-blue-100 outline-none text-sm">
+          </div>
+        </div>
+
+      
+        <div class="ml-auto flex items-center gap-1.5 sm:gap-3 shrink-0">
+          <details class="relative">
+            <summary class="list-none cursor-pointer flex items-center gap-1 bg-gray-50 border border-gray-200 px-2 sm:px-3 py-1.5 rounded-full">
+              <span class="english text-lg sm:text-xl">🇬🇧 <span class="text-xs font-semibold hidden xs:inline">EN</span></span>
+              <span class="khmer text-lg sm:text-xl">🇰🇭 <span class="text-xs font-semibold hidden xs:inline">KH</span></span>
+              <span class="text-gray-400 text-xs ml-1 hidden sm:inline">▼</span>
+            </summary>
+            <div class="absolute right-0 mt-2 w-36 bg-white border border-gray-200 rounded-xl shadow-xl p-2 z-50">
+              <label for="english" class="block px-3 py-2 rounded-lg text-sm hover:bg-gray-100 cursor-pointer flex items-center gap-2">
+                🇬🇧 English
+              </label>
+              <label for="khmer" class="block px-3 py-2 rounded-lg text-sm hover:bg-gray-100 cursor-pointer flex items-center gap-2">
+                🇰🇭 Khmer
+              </label>
+            </div>
+          </details>
+
+          <a id="auth-login-link" href="#view-login" class="blue-button text-white px-3.5 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap">
+            <span class="english">Log In</span>
+            <span class="khmer">ចូលគណនី</span>
+          </a>
+        </div>
+
+      </div>
+
+  
+      <div class="md:hidden px-3 pb-3">
+        <div class="relative">
+          <svg class="absolute left-4 inset-y-0 my-auto text-gray-400 pointer-events-none" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" />
+            <path d="M20 20L16 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+          <input type="text" placeholder="Search events..." class="search-box w-full h-10 pl-11 pr-5 rounded-full bg-blue-50 border border-blue-100 outline-none text-sm">
+        </div>
+      </div>
+    </header>
+
+    <div class="flex flex-1">
+
+      <label id="overlay" for="menu" class="fixed inset-0 bg-black/30 z-30 md:hidden"></label>
+
+      <aside id="sidebar" class="fixed md:sticky top-[68px] sm:top-[76px] left-0 z-40 w-[80vw] max-w-[260px] md:w-[210px] lg:w-[235px] h-[calc(100vh-68px)] sm:h-[calc(100vh-76px)] bg-white border-r border-gray-200 flex flex-col justify-between shrink-0 overflow-y-auto">
+        <div class="p-3 lg:p-4">
+          <nav class="space-y-1.5">
+            <a href="#" class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-gray-700 font-semibold hover:bg-blue-50 hover:text-blue-600">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M3 10L12 3L21 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M5 9V21H19V9" stroke="currentColor" stroke-width="1.8" />
+                <path d="M9 21V14H15V21" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+              <span class="english">Home</span>
+              <span class="khmer">ទំព័រដើម</span>
+            </a>
+
+            <a href="#view-events" class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-gray-700 font-semibold hover:bg-blue-50 hover:text-blue-600">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8" />
+                <path d="M8 3V7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M16 3V7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M3 10H21" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+              <span class="english">Events</span>
+              <span class="khmer">ព្រឹត្តិការណ៍</span>
+            </a>
+
+            <a id="my-events-link" href="#view-myevents" class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-gray-700 font-semibold hover:bg-blue-50 hover:text-blue-600">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M6 4H18V21L12 17.5L6 21V4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+              </svg>
+              <span class="english">My Events</span>
+              <span class="khmer">ព្រឹត្តិការណ៍របស់ខ្ញុំ</span>
+            </a>
+
+            <a id="add-event-link" href="#view-add-event" class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-gray-700 font-semibold hover:bg-blue-50 hover:text-blue-600">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+                <path d="M12 8V16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M8 12H16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              </svg>
+              <span class="english">Add Event</span>
+              <span class="khmer">បន្ថែមព្រឹត្តិការណ៍</span>
+            </a>
+
+            <a id="admin-users-link" href="#view-admin-users" class="hidden sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-gray-700 font-semibold hover:bg-blue-50 hover:text-blue-600">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.8" />
+                <path d="M3 20C3 16.7 5.7 14 9 14C12.3 14 15 16.7 15 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M16 11C18.8 11 21 13.2 21 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M17 5.5C18.7 5.9 19.8 7.6 19.4 9.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              </svg>
+              <span class="english">User Management</span>
+              <span class="khmer">គ្រប់គ្រងអ្នកប្រើប្រាស់</span>
+            </a>
+          </nav>
+        </div>
+
+        <div class="p-3 lg:p-4">
+          <div class="bg-[#f0f5ff] border border-[#d8e5ff] rounded-[24px] p-5 text-center flex flex-col items-center">
+           
+            <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-3 shadow-sm border border-blue-50">
+           
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+                <path d="M4 21V7L12 3L20 7V21H4Z" stroke="#0052cc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <rect x="7" y="9" width="3" height="3" rx="0.5" fill="#0052cc" />
+                <rect x="14" y="9" width="3" height="3" rx="0.5" fill="#0052cc" />
+                <rect x="7" y="14" width="3" height="3" rx="0.5" fill="#0052cc" />
+                <rect x="14" y="14" width="3" height="3" rx="0.5" fill="#0052cc" />
+              </svg>
+            </div>
+
+          
+            <h3 class="font-bold text-lg text-[#0f172a] leading-tight">
+              <span class="english">Better Campus</span>
+              <span class="khmer">សាកលវិទ្យាល័យប្រសើរ</span>
+            </h3>
+
+           
+            <p class="text-sm font-medium text-[#0052cc] mt-0.5 mb-4">
+              <span class="english">Better Future</span>
+              <span class="khmer">អនាគតកាន់តែល្អ</span>
+            </p>
+
+           
+            <a href="#view-events" class="w-full blue-button text-white py-3 rounded-xl text-sm font-semibold shadow-sm">
+              <span class="english">Join Community</span>
+              <span class="khmer">ចូលរួមសហគមន៍</span>
+            </a>
+          </div>
+
+          <div class="pt-4 border-t border-gray-100 mt-4 flex items-center justify-between text-xs font-medium text-gray-600">
+            <a href="#contact" class="flex items-center gap-1.5 hover:text-blue-600 transition">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              <span class="english">Help & Support</span>
+              <span class="khmer">ជំនួយ</span>
+            </a>
+
+            <a id="auth-logout-link" href="#" class="hidden flex items-center gap-1.5 hover:text-blue-600 transition">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+              <span class="english">Log Out</span>
+              <span class="khmer">ចាកចេញ</span>
+            </a>
+          </div>
+        </div>
+      </aside>
+
+      
+      <main class="flex-1 min-w-0">
+
+        <section id="view-events" class="view-panel p-4 sm:p-6 max-w-[1450px] mx-auto">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+            <h1 class="text-xl sm:text-2xl font-bold">
+              <span class="english">All Campus Events</span>
+              <span class="khmer">ព្រឹត្តិការណ៍សាកលវិទ្យាល័យទាំងអស់</span>
+            </h1>
+            <a href="#" class="text-sm text-blue-600 font-semibold">← Back to Home</a>
+          </div>
+
+          <div id="all-events-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+            <article class="event-card bg-white border border-gray-200 rounded-xl overflow-hidden">
+              <img src="/img/Rectangle 9.png" alt="Orientation" class="w-full h-44 object-cover">
+              <div class="p-4">
+                <h3 class="font-bold text-base">Orientation Day</h3>
+                <p class="text-xs text-gray-500 mt-2">📅 Apr 25, 2025 • 08:00 AM</p>
+                <p class="text-xs text-gray-500 mt-1">📍 Campus Hall</p>
+                <a href="#modal-event-1" class="block text-center blue-button text-white rounded-lg py-2.5 mt-4 text-xs font-semibold">View Details →</a>
+              </div>
+            </article>
+
+            <article class="event-card bg-white border border-gray-200 rounded-xl overflow-hidden">
+              <img src="./img/Rectangle 12.png" alt="Tech" class="w-full h-44 object-cover">
+              <div class="p-4">
+                <h3 class="font-bold text-base">Tech Workshop</h3>
+                <p class="text-xs text-gray-500 mt-2">📅 Apr 28, 2025 • 10:00 AM</p>
+                <p class="text-xs text-gray-500 mt-1">📍 Computer Lab</p>
+                <a href="#modal-event-2" class="block text-center blue-button text-white rounded-lg py-2.5 mt-4 text-xs font-semibold">View Details →</a>
+              </div>
+            </article>
+
+            <article class="event-card bg-white border border-gray-200 rounded-xl overflow-hidden">
+              <img src="./img/Rectangle 15.png" alt="Sports" class="w-full h-44 object-cover">
+              <div class="p-4">
+                <h3 class="font-bold text-base">Sport Day</h3>
+                <p class="text-xs text-gray-500 mt-2">📅 May 2, 2025 • 08:00 AM</p>
+                <p class="text-xs text-gray-500 mt-1">📍 Sports Field</p>
+                <a href="#modal-event-3" class="block text-center blue-button text-white rounded-lg py-2.5 mt-4 text-xs font-semibold">View Details →</a>
+              </div>
+            </article>
+
+            <article class="event-card bg-white border border-gray-200 rounded-xl overflow-hidden">
+              <img src="./img/Rectangle 18.png" alt="Club" class="w-full h-44 object-cover">
+              <div class="p-4">
+                <h3 class="font-bold text-base">Club Activities</h3>
+                <p class="text-xs text-gray-500 mt-2">📅 May 5, 2025 • 09:00 AM</p>
+                <p class="text-xs text-gray-500 mt-1">📍 Main Hall</p>
+                <a href="#modal-event-4" class="block text-center blue-button text-white rounded-lg py-2.5 mt-4 text-xs font-semibold">View Details →</a>
+              </div>
+            </article>
+          </div>
+        </section>
+
+       
+        <section id="view-myevents" class="view-panel p-4 sm:p-6 max-w-[1450px] mx-auto">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+            <h1 class="text-xl sm:text-2xl font-bold">
+              <span class="english">My Registered Events</span>
+              <span class="khmer">ព្រឹត្តិការណ៍ដែលបានចុះឈ្មោះ</span>
+            </h1>
+            <a href="#" class="text-sm text-blue-600 font-semibold">← Back to Home</a>
+          </div>
+
+          <div id="my-events-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6"></div>
+          <p id="my-events-empty" class="text-sm text-gray-500 bg-white border border-gray-200 rounded-xl p-6 text-center">
+            No saved events yet. Open an event and choose Add to My Events.
+          </p>
+        </section>
+
+        <section id="view-add-event" class="view-panel p-4 sm:p-6 max-w-xl mx-auto">
+          <div class="bg-white border border-gray-200 rounded-2xl p-5 sm:p-6 shadow-sm">
+            <h1 class="text-xl font-bold mb-4">
+              <span class="english">Create Campus Event</span>
+              <span class="khmer">បង្កើតព្រឹត្តិការណ៍ថ្មី</span>
+            </h1>
+
+            <form id="add-event-form" class="space-y-4">
+              <div>
+                <label for="event-title" class="block text-xs font-semibold mb-1">Event Title</label>
+                <input id="event-title" name="title" type="text" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm" placeholder="e.g. AI Seminar">
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="event-date" class="block text-xs font-semibold mb-1">Date</label>
+                  <input id="event-date" name="date" type="date" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm">
+                </div>
+                <div>
+                  <label for="event-time" class="block text-xs font-semibold mb-1">Time</label>
+                  <input id="event-time" name="time" type="time" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm">
+                </div>
+              </div>
+              <div>
+                <label for="event-location" class="block text-xs font-semibold mb-1">Location</label>
+                <input id="event-location" name="location" type="text" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm" placeholder="Campus Auditorium">
+              </div>
+              <div>
+                <label for="event-description" class="block text-xs font-semibold mb-1">About the Event</label>
+                <textarea id="event-description" name="description" required rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-y" placeholder="Describe what attendees can expect..."></textarea>
+              </div>
+              <div>
+                <label for="event-image" class="block text-xs font-semibold mb-1">Event Image</label>
+                <input id="event-image" name="image" type="file" accept="image/*" class="w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-blue-700">
+                <img id="event-image-preview" class="hidden w-full h-40 object-cover rounded-lg mt-3" alt="Selected event preview">
+              </div>
+              <button id="event-submit-button" type="submit" class="w-full blue-button text-white font-semibold py-2.5 rounded-lg text-sm">
+                Publish Event
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <section id="view-admin-users" class="view-panel p-4 sm:p-6 max-w-4xl mx-auto">
+          <div class="bg-white border border-gray-200 rounded-2xl p-5 sm:p-6 shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+              <div>
+                <h1 class="text-xl sm:text-2xl font-bold">User Management</h1>
+                <p class="text-sm text-gray-500 mt-1">Review registered users and reset passwords when needed.</p>
+              </div>
+              <div class="bg-blue-50 border border-blue-100 rounded-xl px-5 py-3 text-center">
+                <p class="text-2xl font-bold text-blue-700" id="registered-user-count">0</p>
+                <p class="text-xs font-semibold text-blue-700">Registered Users</p>
+              </div>
+            </div>
+            <div id="registered-users-list" class="space-y-3"></div>
+            <p id="registered-users-empty" class="hidden text-sm text-gray-500 text-center py-8">No users have registered yet.</p>
+          </div>
+        </section>
+
+     
+        <section id="view-login" class="view-panel p-4 sm:p-6 max-w-md mx-auto mt-4 sm:mt-8">
+          <div class="bg-white border border-gray-200 rounded-2xl p-5 sm:p-6 shadow-sm">
+            <h1 class="text-xl font-bold mb-4 text-center">
+              <span class="english">Login to Campus Event</span>
+              <span class="khmer">ចូលគណនី</span>
+            </h1>
+            <form id="login-form" class="space-y-4">
+              <div>
+                <label for="login-email" class="block text-xs font-semibold mb-1">Student ID / Email</label>
+                <input id="login-email" name="email" type="text" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm" placeholder="student@campus.edu">
+              </div>
+              <div>
+                <label for="login-password" class="block text-xs font-semibold mb-1">Password</label>
+                <input id="login-password" name="password" type="password" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm">
+              </div>
+              <button type="submit" class="w-full blue-button text-white font-semibold py-2.5 rounded-lg text-sm">
+                Login
+              </button>
+            </form>
+
+            <p id="login-message" class="hidden text-sm text-center mt-3"></p>
+
+            <div class="border-t border-gray-100 mt-5 pt-5 text-center">
+              <p class="text-sm text-gray-600 mb-3">Don’t have an account?</p>
+              <button id="show-register-button" type="button" class="text-sm text-blue-600 font-semibold hover:underline">
+                Create an account
+              </button>
+            </div>
+
+            <form id="register-form" class="hidden space-y-4 mt-5 border-t border-gray-100 pt-5">
+              <h2 class="font-bold text-lg">Create Account</h2>
+              <div>
+                <label for="register-email" class="block text-xs font-semibold mb-1">Email</label>
+                <input id="register-email" name="email" type="email" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm" placeholder="student@campus.edu">
+              </div>
+              <div>
+                <label for="register-password" class="block text-xs font-semibold mb-1">Password</label>
+                <input id="register-password" name="password" type="password" minlength="6" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm">
+              </div>
+              <div>
+                <label for="register-confirm-password" class="block text-xs font-semibold mb-1">Confirm Password</label>
+                <input id="register-confirm-password" name="confirmPassword" type="password" minlength="6" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm">
+              </div>
+              <button type="submit" class="w-full blue-button text-white font-semibold py-2.5 rounded-lg text-sm">
+                Register
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <section id="view-home" class="view-panel max-w-[1450px] mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7">
+
+ 
+          <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,2fr)_360px] gap-5">
+            <div id="hero-carousel" class="campus-image min-h-[340px] sm:min-h-[440px] lg:min-h-[560px] rounded-2xl overflow-hidden flex items-end relative">
+              <div id="hero-slide-track" class="absolute inset-0 flex transition-transform duration-700 ease-in-out"></div>
+              <div class="absolute inset-x-0 top-0 flex justify-between p-4 z-10">
+                <button id="hero-previous" type="button" class="w-10 h-10 rounded-full bg-white/85 text-blue-900 text-xl font-bold shadow hover:bg-white" aria-label="Previous hero image">‹</button>
+                <button id="hero-next" type="button" class="w-10 h-10 rounded-full bg-white/85 text-blue-900 text-xl font-bold shadow hover:bg-white" aria-label="Next hero image">›</button>
+              </div>
+              <div class="relative z-10 p-5 sm:p-8 lg:p-10 text-white">
+                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm border border-white/20 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm mb-4 sm:mb-5">
+                  ✦ <span class="ml-2 english">Welcome to Campus Event</span>
+                  <span class="ml-2 khmer">សូមស្វាគមន៍មកកាន់ Campus Event</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl lg:text-6xl font-extrabold leading-tight max-w-3xl">
+                  <span class="english">Discover Amazing Campus Events</span>
+                  <span class="khmer">ស្វែងរកព្រឹត្តិការណ៍សាកលវិទ្យាល័យដ៏អស្ចារ្យ</span>
+                </h1>
+                <p class="mt-3 sm:mt-4 text-sm sm:text-base lg:text-lg text-white/90 max-w-2xl leading-relaxed">
+                  <span class="english">Join events, make new friends, and be an active part of our growing campus community.</span>
+                  <span class="khmer">ចូលរួមព្រឹត្តិការណ៍ ស្គាល់មិត្តភ័ក្តិថ្មី និងក្លាយជាផ្នែកសកម្មនៃសហគមន៍របស់យើង។</span>
+                </p>
+                <div class="flex flex-wrap items-center gap-4 mt-5 sm:mt-7">
+                  <a href="#view-events" class="blue-button px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold text-sm text-white">
+                    <span class="english">Explore Events →</span>
+                    <span class="khmer">រុករកព្រឹត្តិការណ៍ →</span>
+                  </a>
+                </div>
+              </div>
+              <div id="hero-indicators" class="absolute bottom-4 right-5 flex gap-2 z-10" aria-label="Hero image slides"></div>
+            </div>
+
+          
+            <div class="flex flex-col gap-5">
+              <section class="bg-white border border-gray-200 rounded-2xl p-5">
+                <div class="flex items-center justify-between mb-5">
+                  <h2 class="font-bold text-lg">
+                    <span class="english">Upcoming Events</span>
+                    <span class="khmer">ព្រឹត្តិការណ៍នាពេលខាងមុខ</span>
+                  </h2>
+                  <a href="#view-events" class="text-xs font-semibold text-blue-600">View All →</a>
+                </div>
+
+                <a href="#modal-event-1" class="upcoming-event flex gap-4 pb-5 border-b border-gray-100 hover:bg-blue-50/50 p-2 rounded-xl transition">
+                  <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">🎓</div>
+                  <div>
+                    <h3 class="font-semibold text-sm">Orientation Day</h3>
+                    <p class="text-xs text-gray-500 mt-1">Apr 25, 2025 • 08:00 AM</p>
+                    <p class="text-xs text-gray-500 mt-1">📍 Campus Hall</p>
+                  </div>
+                </a>
+
+                <a href="#modal-event-2" class="upcoming-event flex gap-4 pt-5 hover:bg-blue-50/50 p-2 rounded-xl transition">
+                  <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">💻</div>
+                  <div>
+                    <h3 class="font-semibold text-sm">Tech Workshop</h3>
+                    <p class="text-xs text-gray-500 mt-1">Apr 28, 2025 • 10:00 AM</p>
+                    <p class="text-xs text-gray-500 mt-1">📍 Computer Lab</p>
+                  </div>
+                </a>
+              </section>
+
+              <section class="bg-blue-700 rounded-2xl text-white p-6 sm:p-7 text-center flex-1 flex flex-col justify-center">
+                <div class="w-14 h-14 bg-white/20 rounded-full mx-auto flex items-center justify-center text-2xl mb-4">👥</div>
+                <h2 class="font-bold text-xl">
+                  <span class="english">Join Our Community</span>
+                  <span class="khmer">ចូលរួមសហគមន៍របស់យើង</span>
+                </h2>
+                <p class="text-sm text-blue-100 mt-2 max-w-xs mx-auto">
+                  <span class="english">Be part of something bigger. Meet, learn, grow together!</span>
+                  <span class="khmer">ចូលរួមជាមួយសហគមន៍ ជួបគ្នា រៀនសូត្រ និងរីកចម្រើនជាមួយគ្នា!</span>
+                </p>
+                <a href="#view-events" class="bg-white text-blue-700 px-7 py-2.5 rounded-full font-bold text-sm mt-5 mx-auto hover:bg-blue-50">
+                  <span class="english">Get Started →</span>
+                  <span class="khmer">ចាប់ផ្តើម →</span>
+                </a>
+              </section>
+            </div>
+          </div>
+
+    
+          <section class="mt-8">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+              <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2">
+                 <span class="english">Featured Events</span><span class="khmer">ព្រឹត្តិការណ៍លេចធ្លោ</span>
+              </h2>
+              <a href="#view-events" class="text-sm text-blue-600 font-semibold">
+                <span class="english">View All →</span>
+                <span class="khmer">មើលទាំងអស់ →</span>
+              </a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
+              <article class="event-card bg-white border border-gray-200 rounded-xl overflow-hidden">
+                <img src="/img/Rectangle 9.png" alt="Orientation Day" class="w-full h-44 object-cover">
+                <div class="p-4">
+                  <h3 class="font-bold text-base">Orientation Day</h3>
+                  <p class="text-xs text-gray-500 mt-2">📅 Apr 25, 2025 • 08:00 AM</p>
+                  <p class="text-xs text-gray-500 mt-1">📍 Campus Hall</p>
+                  <a href="#modal-event-1" class="block text-center blue-button text-white rounded-lg py-2.5 mt-4 text-xs font-semibold">View Details →</a>
+                </div>
+              </article>
+
+              <article class="event-card bg-white border border-gray-200 rounded-xl overflow-hidden">
+                <img src="./img/Rectangle 12.png" alt="Tech Workshop" class="w-full h-44 object-cover">
+                <div class="p-4">
+                  <h3 class="font-bold text-base">Tech Workshop</h3>
+                  <p class="text-xs text-gray-500 mt-2">📅 Apr 28, 2025 • 10:00 AM</p>
+                  <p class="text-xs text-gray-500 mt-1">📍 Computer Lab</p>
+                  <a href="#modal-event-2" class="block text-center blue-button text-white rounded-lg py-2.5 mt-4 text-xs font-semibold">View Details →</a>
+                </div>
+              </article>
+
+              <article class="event-card bg-white border border-gray-200 rounded-xl overflow-hidden">
+                <img src="./img/Rectangle 15.png" alt="Sport Day" class="w-full h-44 object-cover">
+                <div class="p-4">
+                  <h3 class="font-bold text-base">Sport Day</h3>
+                  <p class="text-xs text-gray-500 mt-2">📅 May 2, 2025 • 08:00 AM</p>
+                  <p class="text-xs text-gray-500 mt-1">📍 Sports Field</p>
+                  <a href="#modal-event-3" class="block text-center blue-button text-white rounded-lg py-2.5 mt-4 text-xs font-semibold">View Details →</a>
+                </div>
+              </article>
+
+              <article class="event-card bg-white border border-gray-200 rounded-xl overflow-hidden">
+                <img src="./img/Rectangle 18.png" alt="Club Activities" class="w-full h-44 object-cover">
+                <div class="p-4">
+                  <h3 class="font-bold text-base">Club Activities</h3>
+                  <p class="text-xs text-gray-500 mt-2">📅 May 5, 2025 • 09:00 AM</p>
+                  <p class="text-xs text-gray-500 mt-1">📍 Main Hall</p>
+                  <a href="#modal-event-4" class="block text-center blue-button text-white rounded-lg py-2.5 mt-4 text-xs font-semibold">View Details →</a>
+                </div>
+              </article>
+            </div>
+          </section>
+
+    
+          <section id="contact" class="mt-12 bg-white border border-gray-200 rounded-2xl p-5 sm:p-8">
+            <div class="text-center max-w-xl mx-auto mb-8">
+              <h2 class="text-xl sm:text-2xl font-bold">
+                <span class="english">Contact Us</span>
+                <span class="khmer">ទាក់ទងមកយើង</span>
+              </h2>
+              <p class="text-sm text-gray-500 mt-2">
+                <span class="english">Have questions or need assistance? Reach out to our campus events team.</span>
+                <span class="khmer">មានសំណួរឬត្រូវការជំនួយ? ទាក់ទងក្រុមការងារព្រឹត្តិការណ៍សាកលវិទ្យាល័យរបស់យើង។</span>
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+           
+              <div class="bg-blue-50 border border-blue-100 p-6 rounded-xl text-center flex flex-col items-center">
+                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-3 text-blue-600 shadow-sm border border-blue-100">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.27c1.21.49 2.53.76 3.88.76a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.35.27 2.67.76 3.88a1 1 0 01-.27 1.11l-2.37 2.37z" />
+                  </svg>
+                </div>
+                <h3 class="font-semibold text-sm"><span class="english">Call Us</span><span class="khmer">ទូរស័ព្ទ</span></h3>
+                <p class="text-xs text-gray-600 mt-1 font-medium">015296683</p>
+              </div>
+
+           
+              <div class="bg-blue-50 border border-blue-100 p-6 rounded-xl text-center flex flex-col items-center">
+                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-3 text-[#24A1DE] shadow-sm border border-blue-100">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z" />
+                  </svg>
+                </div>
+                <h3 class="font-semibold text-sm"><span class="english">Telegram</span><span class="khmer">តេឡេក្រាម</span></h3>
+                <p class="text-xs text-gray-600 mt-1">
+                  <a href="https://t.me/Liniyas168" target="_blank" class="text-blue-600 font-semibold hover:underline">@Liniyas168</a>
+                </p>
+              </div>
+
+          
+              <div class="bg-blue-50 border border-blue-100 p-6 rounded-xl text-center flex flex-col items-center">
+                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-3 text-[#181717] shadow-sm border border-blue-100">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                  </svg>
+                </div>
+                <h3 class="font-semibold text-sm"><span class="english">GitHub</span><span class="khmer">ហ្គីតហាប់</span></h3>
+                <p class="text-xs text-gray-600 mt-1">
+                  <a href="https://github.com/dalinmab1-sketchnot" target="_blank" class="text-blue-600 font-semibold hover:underline">dalinmab1-sketchnot</a>
+                </p>
+              </div>
+            </div>
+          </section>
+
+        </section>
+
+      </main>
+    </div>
+
+   
+    <div id="modal-event-1" class="modal-backdrop fixed inset-0 bg-black/60 z-50 items-center justify-center p-4 overflow-y-auto">
+      <div class="bg-white rounded-2xl max-w-lg w-full p-5 sm:p-6 relative shadow-2xl my-8">
+        <a href="#" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">✕</a>
+        <img src="./img/Rectangle 9.png" class="w-full h-40 sm:h-48 object-cover rounded-xl mb-4" alt="Event">
+        <h2 class="text-lg sm:text-xl font-bold mb-2">Campus Orientation Day</h2>
+        <p class="text-xs text-blue-600 font-semibold mb-3">📅 Apr 25, 2025 • 08:00 AM | 📍 Campus Hall</p>
+        <p class="text-sm text-gray-600 mb-6">
+          Welcome to the new academic year! Join us for a full day of introductions, campus tours, meeting academic advisors, and exploring student clubs.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <a href="#view-myevents" class="favorite-event flex-1 blue-button text-white text-center py-2.5 rounded-lg text-sm font-semibold" data-event-id="event-1" data-title="Campus Orientation Day" data-date="2025-04-25" data-time="08:00" data-location="Campus Hall" data-image="./img/Rectangle 9.png">
+            Add to My Events
+          </a>
+          <a href="#" class="px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-50 text-center">
+            Close
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-event-2" class="modal-backdrop fixed inset-0 bg-black/60 z-50 items-center justify-center p-4 overflow-y-auto">
+      <div class="bg-white rounded-2xl max-w-lg w-full p-5 sm:p-6 relative shadow-2xl my-8">
+        <a href="#" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">✕</a>
+        <img src="./img/Rectangle 12.png" class="w-full h-40 sm:h-48 object-cover rounded-xl mb-4" alt="Event">
+        <h2 class="text-lg sm:text-xl font-bold mb-2">Tech Workshop</h2>
+        <p class="text-xs text-blue-600 font-semibold mb-3">📅 Apr 28, 2025 • 10:00 AM | 📍 Computer Lab</p>
+        <p class="text-sm text-gray-600 mb-6">
+          Hands-on workshop covering web development, UI/UX fundamentals, and software tools for modern students.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <a href="#view-myevents" class="favorite-event flex-1 blue-button text-white text-center py-2.5 rounded-lg text-sm font-semibold" data-event-id="event-2" data-title="Tech Workshop" data-date="2025-04-28" data-time="10:00" data-location="Computer Lab" data-image="./img/Rectangle 12.png">
+            Add to My Events
+          </a>
+          <a href="#" class="px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-50 text-center">
+            Close
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-event-3" class="modal-backdrop fixed inset-0 bg-black/60 z-50 items-center justify-center p-4 overflow-y-auto">
+      <div class="bg-white rounded-2xl max-w-lg w-full p-5 sm:p-6 relative shadow-2xl my-8">
+        <a href="#" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">✕</a>
+        <img src="./img/Rectangle 15.png" class="w-full h-40 sm:h-48 object-cover rounded-xl mb-4" alt="Event">
+        <h2 class="text-lg sm:text-xl font-bold mb-2">Sport Day</h2>
+        <p class="text-xs text-blue-600 font-semibold mb-3">📅 May 2, 2025 • 08:00 AM | 📍 Sports Field</p>
+        <p class="text-sm text-gray-600 mb-6">
+          Annual inter-department sports competition featuring football, basketball, track & field events, and cheerleading.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <a href="#view-myevents" class="favorite-event flex-1 blue-button text-white text-center py-2.5 rounded-lg text-sm font-semibold" data-event-id="event-3" data-title="Sport Day" data-date="2025-05-02" data-time="08:00" data-location="Sports Field" data-image="./img/Rectangle 15.png">
+            Add to My Events
+          </a>
+          <a href="#" class="px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-50 text-center">
+            Close
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-event-4" class="modal-backdrop fixed inset-0 bg-black/60 z-50 items-center justify-center p-4 overflow-y-auto">
+      <div class="bg-white rounded-2xl max-w-lg w-full p-5 sm:p-6 relative shadow-2xl my-8">
+        <a href="#" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">✕</a>
+        <img src="./img/Rectangle 18.png" class="w-full h-40 sm:h-48 object-cover rounded-xl mb-4" alt="Event">
+        <h2 class="text-lg sm:text-xl font-bold mb-2">Club Activities & Exhibition</h2>
+        <p class="text-xs text-blue-600 font-semibold mb-3">📅 May 5, 2025 • 09:00 AM | 📍 Main Hall</p>
+        <p class="text-sm text-gray-600 mb-6">
+          Explore over 30 student clubs, watch live performances, sign up for extracurricular activities, and network.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <a href="#view-myevents" class="favorite-event flex-1 blue-button text-white text-center py-2.5 rounded-lg text-sm font-semibold" data-event-id="event-4" data-title="Club Activities & Exhibition" data-date="2025-05-05" data-time="09:00" data-location="Main Hall" data-image="./img/Rectangle 18.png">
+            Add to My Events
+          </a>
+          <a href="#" class="px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-50 text-center">
+            Close
+          </a>
+        </div>
+      </div>
+    </div>
+
+ 
+    <footer class="bg-white border-t border-gray-200 py-6 text-center text-xs text-gray-500 px-4">
+      <p>
+        <span class="english">© 2026 Campus Event. All rights reserved.</span>
+        <span class="khmer">© ២០២៦ Campus Event. រក្សាសិទ្ធិគ្រប់យ៉ាង។</span>
+      </p>
+    </footer>
+
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+
+</body>
+</html>

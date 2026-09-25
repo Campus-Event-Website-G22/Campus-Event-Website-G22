@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Campus Event</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --bg: #F5F7FB;
+    --surface: #FFFFFF;
+    --surface-2: #EEF1F8;
+    --ink: #12172B;
+    --ink-soft: #5B6478;
+    --line: #E4E8F2;
+    --brand: #2451E0;
+    --brand-ink: #16308C;
+    --brand-soft: #E7ECFD;
+    --accent: #FF8A3D;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0E1220;
+      --surface: #161B2E;
+      --surface-2: #1D2338;
+      --ink: #EEF1FB;
+      --ink-soft: #9AA3BF;
+      --line: #2A3150;
+      --brand: #5B84FF;
+      --brand-ink: #DCE6FF;
+      --brand-soft: #1D2A55;
+      --accent: #FFA05C;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0E1220;
+    --surface: #161B2E;
+    --surface-2: #1D2338;
+    --ink: #EEF1FB;
+    --ink-soft: #9AA3BF;
+    --line: #2A3150;
+    --brand: #5B84FF;
+    --brand-ink: #DCE6FF;
+    --brand-soft: #1D2A55;
+    --accent: #FFA05C;
+  }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--ink); font-family: 'Inter', 'Noto Sans Khmer', system-ui, sans-serif; }
+  html[lang="km"] body { font-family: 'Noto Sans Khmer', 'Inter', system-ui, sans-serif; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
+  .card { background: var(--surface); border: 1px solid var(--line); }
+  .card-2 { background: var(--surface-2); }
+  .brand-btn { background: var(--brand); }
+  .brand-btn:hover { background: var(--brand-ink); }
+  .brand-text { color: var(--brand); }
+  .fade-in { animation: fadeIn .35s ease both; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(6px);} to {opacity:1; transform:none;} }
+  .modal-backdrop { backdrop-filter: blur(3px); }
+  [data-view] { display: none; }
+  [data-view].active { display: block; }
+  textarea, input, select { color: var(--ink); }
+  .no-scrollbar::-webkit-scrollbar{ display:none; }
+  .no-scrollbar{ -ms-overflow-style:none; scrollbar-width:none; }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="app" class="min-h-screen flex flex-col">
+
+  <!-- Topbar -->
+  <header class="sticky z-30 border-b" style="top: env(safe-area-inset-top, 0px); background: var(--surface); border-color: var(--line);">
+    <div class="flex items-center gap-3 px-4 py-3 md:px-6">
+      <button id="hamburger" class="md:hidden p-2 -ml-2 rounded-lg" style="color: var(--ink-soft);" aria-label="Menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="flex items-center gap-2 shrink-0">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAqCAYAAADFw8lbAAADp0lEQVR4nO2YP2wbVRzHP+/OZ/tcTFzFRCh/6FCZlLBR1YWkA5ESqQsFOkMTQtnIxFALCWVCokVMESu4EgNTqkRsDZ1I1WaALqXpmBgHgWKH2u7ZsXP3GBKbRM3dPTuHqkj5brben8/7/d77/TkhpZQcAWnPG0BVx6BB6xg0aB0Z0FCnE11jmgTE/r/EgQPbU1ugEri/0mDxtzrLjxuUqo7SvP6kzpn+EFfGTAZe0joCF6oB/5+KJJMtc+dBvYNt/tN7b0WZfjfGQLK9W6cEuvq3zcQ3JdYLdseAe9XbrXPzsy5O9ajD+oI2bBj/fDMwyKZ6u3VufdHFyRfUYD1HORJm558GDgmwXrDJ3q7hKFYanqCNbZi/d7g76aUf7lTZrKiReoLeW6nzZzF4azZVrkoerm6j8pxdQW0Jj3LbbW2cHjR4fzjS1pzf19T2cI+jDpQstc3SgwbTl2KcHzQAmBg3yXxXYUXhoCXLwZGg+wRXV1CJ9HVJX1Ljq4/iLcCmhgZCLMwkmFuqMbtgkS+4JwbVst0jMwncEmU8Jpi+FGNyzPRc/PJIlMsjUW9ghTS1llvvrCgpW5KVnO1pqabyGw7pM8YzVt8rP6P+cnfZD9T9uHNLNUavFcl8XzkQuGxJZhcsRjNF8hseB1Jw/Vou7wOq4BYpJR98/YTZBWsf4NuZIiVLgUKxQvG4o1Lppl+fivPHhr1rvU1KlsNrAyHmZxL0d+vcXKx6LyD9WS8Mp30ek/A/br7g0J/UuT4V5/7jBkDrPjZdPne3xqOcS+IQ/t6/MHzOpx5V8NzotSKTYyYT42YLsGxJsotVsrvWvLW05b+Qj1xBBYBQC3LZxSq3H9SZHItS2oUsq9zP1l4HtAWqoAhI9ak3APkNmy9/fKo8vqlUr45QeFGur14IeOO0wYloEB2Pu86mwkov3xVUE5Ds0hgZCgfJtU/jZyN0xwXaYUABIjp8fNH8X6zak9C4etEkaqit7Qka0iHVp3PjkzixAGFjUcHMh3Fe7dXRFZO45zAhwDQE51IG3376Ij2Jw3+v6Elo3LgaJ50KYRpCJVTvsKh0obYDVl1SKEt+Wt7i51+3eLjaXlH9+qkQbw6Feed8hFeSGrGwQGvj3Mp9vSOhsS2p1qGyBbWG5K9N59nmbG91KHZ+vnxSI2rAiYggFoGwrm7JtkH3AjsSHEdiS7FbD4id5NACFK06QYidCKIJga4pZeVgQJ+XjszXvGPQoHUMGrSODOi/eJlc3f1lcy4AAAAASUVORK5CYII=" alt="Campus Event" class="w-9 h-9 rounded-xl">
+        <span class="font-extrabold text-lg tracking-tight" data-i18n="appName">Campus Event</span>
+      </div>
+
+      <div class="hidden sm:flex items-center flex-1 max-w-md mx-4">
+        <div class="relative w-full">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2" width="16" height="16" viewBox="0 0 24 24" fill="none" style="color: var(--ink-soft);"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input id="searchInput" data-i18n-placeholder="searchPlaceholder" placeholder="Search events..." class="w-full rounded-xl pl-9 pr-3 py-2 text-sm outline-none card-2 border" style="border-color: var(--line);">
+        </div>
+      </div>
+
+      <div class="ml-auto flex items-center gap-2">
+        <div class="relative">
+          <button id="langBtn" class="flex items-center gap-1 rounded-full pl-0.5 pr-1.5 py-0.5 border" style="border-color: var(--line); background: var(--surface-2);" aria-haspopup="true" aria-expanded="false">
+            <span id="langBtnFlag" class="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center shrink-0 border" style="border-color: var(--line);"></span>
+            <svg id="langChevron" width="12" height="12" viewBox="0 0 24 24" fill="none" class="transition-transform" style="color: var(--ink-soft);"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div id="langDropdown" class="hidden absolute right-0 mt-2 w-40 rounded-2xl border card p-1.5 shadow-lg z-40">
+            <button data-lang="en" class="lang-opt w-full flex items-center gap-2.5 rounded-xl px-2 py-2 text-sm font-medium transition-colors">
+              <span class="lang-opt-flag w-6 h-6 rounded-full overflow-hidden flex items-center justify-center shrink-0 border" style="border-color: var(--line);"></span>
+              <span>English</span>
+            </button>
+            <button data-lang="km" class="lang-opt w-full flex items-center gap-2.5 rounded-xl px-2 py-2 text-sm font-medium transition-colors">
+              <span class="lang-opt-flag w-6 h-6 rounded-full overflow-hidden flex items-center justify-center shrink-0 border" style="border-color: var(--line);"></span>
+              <span>ខ្មែរ</span>
+            </button>
+          </div>
+        </div>
+        <button id="loginBtn" data-i18n="logIn" class="hidden sm:inline-flex rounded-full px-4 py-2 text-sm font-semibold text-white brand-btn">Log In</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex flex-1 min-h-0">
+
+  
+    <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-40 w-64 -translate-x-full md:translate-x-0 transition-transform duration-200 flex flex-col justify-between border-r" style="background: var(--surface); border-color: var(--line); top: 0;">
+      <div class="p-4 pt-6 md:pt-6" style="padding-top: calc(1.5rem + env(safe-area-inset-top, 0px));">
+        <nav class="space-y-1">
+          <button data-nav="home" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 11.5 12 4l9 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            <span data-i18n="navHome">Home</span>
+          </button>
+          <button data-nav="events" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5" width="17" height="15" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 3v4M16 3v4M3.5 10h17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span data-i18n="navEvents">Events</span>
+          </button>
+          <button data-nav="myevents" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 4h12v16l-6-3.5L6 20V4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            <span data-i18n="navMyEvents">My Events</span>
+          </button>
+          <button id="addEventNav" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span data-i18n="navAddEvent">Add Event</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="p-4 space-y-3">
+        <div class="rounded-2xl p-4 text-center card-2 border" style="border-color: var(--line);">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAqCAYAAADFw8lbAAADp0lEQVR4nO2YP2wbVRzHP+/OZ/tcTFzFRCh/6FCZlLBR1YWkA5ESqQsFOkMTQtnIxFALCWVCokVMESu4EgNTqkRsDZ1I1WaALqXpmBgHgWKH2u7ZsXP3GBKbRM3dPTuHqkj5brben8/7/d77/TkhpZQcAWnPG0BVx6BB6xg0aB0Z0FCnE11jmgTE/r/EgQPbU1ugEri/0mDxtzrLjxuUqo7SvP6kzpn+EFfGTAZe0joCF6oB/5+KJJMtc+dBvYNt/tN7b0WZfjfGQLK9W6cEuvq3zcQ3JdYLdseAe9XbrXPzsy5O9ajD+oI2bBj/fDMwyKZ6u3VufdHFyRfUYD1HORJm558GDgmwXrDJ3q7hKFYanqCNbZi/d7g76aUf7lTZrKiReoLeW6nzZzF4azZVrkoerm6j8pxdQW0Jj3LbbW2cHjR4fzjS1pzf19T2cI+jDpQstc3SgwbTl2KcHzQAmBg3yXxXYUXhoCXLwZGg+wRXV1CJ9HVJX1Ljq4/iLcCmhgZCLMwkmFuqMbtgkS+4JwbVst0jMwncEmU8Jpi+FGNyzPRc/PJIlMsjUW9ghTS1llvvrCgpW5KVnO1pqabyGw7pM8YzVt8rP6P+cnfZD9T9uHNLNUavFcl8XzkQuGxJZhcsRjNF8hseB1Jw/Vou7wOq4BYpJR98/YTZBWsf4NuZIiVLgUKxQvG4o1Lppl+fivPHhr1rvU1KlsNrAyHmZxL0d+vcXKx6LyD9WS8Mp30ek/A/br7g0J/UuT4V5/7jBkDrPjZdPne3xqOcS+IQ/t6/MHzOpx5V8NzotSKTYyYT42YLsGxJsotVsrvWvLW05b+Qj1xBBYBQC3LZxSq3H9SZHItS2oUsq9zP1l4HtAWqoAhI9ak3APkNmy9/fKo8vqlUr45QeFGur14IeOO0wYloEB2Pu86mwkov3xVUE5Ds0hgZCgfJtU/jZyN0xwXaYUABIjp8fNH8X6zak9C4etEkaqit7Qka0iHVp3PjkzixAGFjUcHMh3Fe7dXRFZO45zAhwDQE51IG3376Ij2Jw3+v6Elo3LgaJ50KYRpCJVTvsKh0obYDVl1SKEt+Wt7i51+3eLjaXlH9+qkQbw6Feed8hFeSGrGwQGvj3Mp9vSOhsS2p1qGyBbWG5K9N59nmbG91KHZ+vnxSI2rAiYggFoGwrm7JtkH3AjsSHEdiS7FbD4id5NACFK06QYidCKIJga4pZeVgQJ+XjszXvGPQoHUMGrSODOi/eJlc3f1lcy4AAAAASUVORK5CYII=" alt="Campus Event" class="w-9 h-9 mx-auto mb-2 rounded-lg">
+          <p class="font-bold text-sm" data-i18n="brandTitle">Better Campus</p>
+          <p class="text-xs mb-3" style="color: var(--ink-soft);" data-i18n="brandSub">Better Future</p>
+          <button id="joinCommunityBtn" data-i18n="joinCommunity" class="w-full rounded-full py-2 text-sm font-semibold text-white brand-btn">Join Community</button>
+        </div>
+        <div class="flex items-center justify-between text-xs px-1" style="color: var(--ink-soft);">
+          <button id="helpBtn" class="flex items-center gap-1 hover:underline"><span data-i18n="helpSupport">Help &amp; Support</span></button>
+          <button id="logoutBtn" class="flex items-center gap-1 hover:underline"><span data-i18n="logOut">Log Out</span></button>
+        </div>
+      </div>
+    </aside>
+    <div id="sidebarBackdrop" class="fixed inset-0 bg-black/30 z-30 hidden md:hidden"></div>
+
+    >
+    <main class="flex-1 min-w-0 px-4 py-5 md:px-8 md:py-7 max-w-7xl mx-auto w-full">
+
+      <section data-view="home" class="active fade-in space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div class="lg:col-span-2 relative rounded-3xl overflow-hidden p-7 md:p-10 flex flex-col justify-end min-h-[320px]" style="background: linear-gradient(135deg,#16308C 0%, #2451E0 55%, #4F7CFF 100%);">
+            <svg class="absolute inset-0 opacity-20" width="100%" height="100%" preserveAspectRatio="none"><defs><pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M34 0H0V34" fill="none" stroke="white" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)"/></svg>
+            <span class="relative inline-flex w-fit items-center gap-1.5 text-xs font-semibold text-white/90 bg-white/15 px-3 py-1 rounded-full mb-4" data-i18n="heroTag">✦ Welcome to Campus Event</span>
+            <h1 class="relative text-white text-3xl md:text-4xl font-extrabold leading-tight max-w-lg" data-i18n="heroTitle">Discover Amazing Campus Events</h1>
+            <p class="relative text-white/80 mt-3 max-w-md text-sm md:text-base" data-i18n="heroDesc">Join events, make new friends, and be an active part of our growing campus community.</p>
+            <div class="relative mt-6 flex items-center gap-5">
+              <button id="exploreBtn" class="rounded-full bg-white text-[#16308C] font-semibold px-5 py-2.5 text-sm flex items-center gap-1.5" data-i18n="exploreEvents">Explore Events →</button>
+              <button id="calendarBtn" class="text-white/90 font-medium text-sm underline underline-offset-4" data-i18n="viewCalendar">View Calendar</button>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-5">
+            <div class="card rounded-3xl p-5">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-bold" data-i18n="upcomingEvents">Upcoming Events</h3>
+                <button data-nav="events" class="nav-btn text-xs font-semibold brand-text" data-i18n="viewAll">View All →</button>
+              </div>
+              <div id="upcomingList" class="space-y-3"></div>
+            </div>
+            <div class="rounded-3xl p-5 text-white flex flex-col items-center text-center" style="background: linear-gradient(135deg,#16308C, #2451E0);">
+              <div class="w-11 h-11 rounded-full bg-white/15 flex items-center justify-center mb-2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3" stroke="white" stroke-width="1.6"/><circle cx="17" cy="9" r="2.5" stroke="white" stroke-width="1.6"/><path d="M3 19c0-3 2.7-5 6-5s6 2 6 5" stroke="white" stroke-width="1.6" stroke-linecap="round"/><path d="M15.5 14.2c2.5.4 4.5 2.2 4.5 4.8" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>
+              </div>
+              <p class="font-bold" data-i18n="joinCommunityTitle">Join Our Community</p>
+              <p class="text-xs text-white/80 mt-1 mb-3" data-i18n="joinCommunityDesc">Be part of something bigger. Meet, learn, grow together!</p>
+              <button id="getStartedBtn" class="bg-white text-[#16308C] text-xs font-semibold rounded-full px-4 py-2" data-i18n="getStarted">Get Started →</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-lg flex items-center gap-2"><span>🎉</span><span data-i18n="featuredEvents">Featured Events</span></h3>
+            <button data-nav="events" class="nav-btn text-sm font-semibold brand-text" data-i18n="viewAll">View All →</button>
+          </div>
+          <div id="featuredGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+        </div>
+      </section>
+
+    
+      <section data-view="events" class="fade-in space-y-4">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+          <h2 class="text-xl font-bold" data-i18n="allEvents">All Events</h2>
+          <button id="addEventBtnTop" class="rounded-full brand-btn text-white text-sm font-semibold px-4 py-2 flex items-center gap-1.5">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+            <span data-i18n="addEvent">Add Event</span>
+          </button>
+        </div>
+        <div id="allEventsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </section>
+
+     
+      <section data-view="myevents" class="fade-in space-y-4">
+        <h2 class="text-xl font-bold" data-i18n="navMyEvents">My Events</h2>
+        <div id="myEventsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        <p id="myEventsEmpty" class="text-sm text-center py-10" style="color: var(--ink-soft);" data-i18n="noRegistrations">You haven't registered for any events yet.</p>
+      </section>
+
+    </main>
+  </div>
+
+
+  <footer class="border-t mt-auto" style="background: var(--surface); border-color: var(--line);">
+    <div class="max-w-7xl mx-auto px-4 md:px-8 py-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div>
+        <div class="flex items-center gap-2 mb-2">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACoAAAAqCAYAAADFw8lbAAADp0lEQVR4nO2YP2wbVRzHP+/OZ/tcTFzFRCh/6FCZlLBR1YWkA5ESqQsFOkMTQtnIxFALCWVCokVMESu4EgNTqkRsDZ1I1WaALqXpmBgHgWKH2u7ZsXP3GBKbRM3dPTuHqkj5brben8/7/d77/TkhpZQcAWnPG0BVx6BB6xg0aB0Z0FCnE11jmgTE/r/EgQPbU1ugEri/0mDxtzrLjxuUqo7SvP6kzpn+EFfGTAZe0joCF6oB/5+KJJMtc+dBvYNt/tN7b0WZfjfGQLK9W6cEuvq3zcQ3JdYLdseAe9XbrXPzsy5O9ajD+oI2bBj/fDMwyKZ6u3VufdHFyRfUYD1HORJm558GDgmwXrDJ3q7hKFYanqCNbZi/d7g76aUf7lTZrKiReoLeW6nzZzF4azZVrkoerm6j8pxdQW0Jj3LbbW2cHjR4fzjS1pzf19T2cI+jDpQstc3SgwbTl2KcHzQAmBg3yXxXYUXhoCXLwZGg+wRXV1CJ9HVJX1Ljq4/iLcCmhgZCLMwkmFuqMbtgkS+4JwbVst0jMwncEmU8Jpi+FGNyzPRc/PJIlMsjUW9ghTS1llvvrCgpW5KVnO1pqabyGw7pM8YzVt8rP6P+cnfZD9T9uHNLNUavFcl8XzkQuGxJZhcsRjNF8hseB1Jw/Vou7wOq4BYpJR98/YTZBWsf4NuZIiVLgUKxQvG4o1Lppl+fivPHhr1rvU1KlsNrAyHmZxL0d+vcXKx6LyD9WS8Mp30ek/A/br7g0J/UuT4V5/7jBkDrPjZdPne3xqOcS+IQ/t6/MHzOpx5V8NzotSKTYyYT42YLsGxJsotVsrvWvLW05b+Qj1xBBYBQC3LZxSq3H9SZHItS2oUsq9zP1l4HtAWqoAhI9ak3APkNmy9/fKo8vqlUr45QeFGur14IeOO0wYloEB2Pu86mwkov3xVUE5Ds0hgZCgfJtU/jZyN0xwXaYUABIjp8fNH8X6zak9C4etEkaqit7Qka0iHVp3PjkzixAGFjUcHMh3Fe7dXRFZO45zAhwDQE51IG3376Ij2Jw3+v6Elo3LgaJ50KYRpCJVTvsKh0obYDVl1SKEt+Wt7i51+3eLjaXlH9+qkQbw6Feed8hFeSGrGwQGvj3Mp9vSOhsS2p1qGyBbWG5K9N59nmbG91KHZ+vnxSI2rAiYggFoGwrm7JtkH3AjsSHEdiS7FbD4id5NACFK06QYidCKIJga4pZeVgQJ+XjszXvGPQoHUMGrSODOi/eJlc3f1lcy4AAAAASUVORK5CYII=" alt="Campus Event" class="w-7 h-7 rounded-lg">
+          <span class="font-extrabold" data-i18n="appName">Campus Event</span>
+        </div>
+        <p class="text-sm" style="color: var(--ink-soft);" data-i18n="footerTagline">Discover, join, and organize campus events all in one place.</p>
+      </div>
+      <div>
+        <p class="font-semibold text-sm mb-2" data-i18n="contactUs">Contact Us</p>
+        <ul class="space-y-2 text-sm" style="color: var(--ink-soft);">
+          <li class="flex items-center gap-2">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 5h4l2 5-2.5 1.5a11 11 0 0 0 5 5L14 14l5 2v4a2 2 0 0 1-2 2C9.5 22 2 14.5 2 7a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <a href="tel:015296683" class="hover:underline">015 296 683</a>
+          </li>
+          <li class="flex items-center gap-2">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M21 3 2 10.5l6.2 2.3M21 3l-3.4 17-8.4-6.2M21 3 9.8 13.6" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <a href="https://t.me/Liniyas168" target="_blank" rel="noopener" class="hover:underline">@Liniyas168</a>
+          </li>
+          <li class="flex items-center gap-2">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.1.68-.22.68-.48v-1.7c-2.78.6-3.37-1.35-3.37-1.35-.46-1.15-1.11-1.46-1.11-1.46-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.56-1.11-4.56-4.93 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.9-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.83-2.34 4.68-4.57 4.92.36.31.68.92.68 1.85v2.74c0 .26.18.58.69.48A10 10 0 0 0 12 2Z" fill="currentColor"/></svg>
+            <a href="https://github.com/dalinmab1-sketch" target="_blank" rel="noopener" class="hover:underline">dalinmab1-sketch</a>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <p class="font-semibold text-sm mb-2" data-i18n="quickLinks">Quick Links</p>
+        <ul class="space-y-2 text-sm" style="color: var(--ink-soft);">
+          <li><button data-nav="home" class="nav-btn hover:underline" data-i18n="navHome">Home</button></li>
+          <li><button data-nav="events" class="nav-btn hover:underline" data-i18n="navEvents">Events</button></li>
+          <li><button id="addEventNavFooter" class="hover:underline" data-i18n="addEvent">Add Event</button></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t py-4 text-center text-xs" style="border-color: var(--line); color: var(--ink-soft);">
+      <span data-i18n="footerRights">© 2026 Campus Event. All rights reserved.</span>
+    </div>
+  </footer>
+</div>
+
+<div id="addEventModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop bg-black/40">
+  <div class="card rounded-2xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto no-scrollbar">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="font-bold text-lg" data-i18n="addEventTitle">Add New Event</h3>
+      <button class="close-modal p-1 rounded-lg" style="color: var(--ink-soft);" data-target="addEventModal">✕</button>
+    </div>
+    <form id="addEventForm" class="space-y-3">
+      <div>
+        <label class="text-xs font-semibold" style="color: var(--ink-soft);" data-i18n="formTitle">Event Title</label>
+        <input required name="title" class="mt-1 w-full rounded-xl px-3 py-2 text-sm border card-2" style="border-color: var(--line);">
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs font-semibold" style="color: var(--ink-soft);" data-i18n="formDate">Date</label>
+          <input required type="date" name="date" class="mt-1 w-full rounded-xl px-3 py-2 text-sm border card-2" style="border-color: var(--line);">
+        </div>
+        <div>
+          <label class="text-xs font-semibold" style="color: var(--ink-soft);" data-i18n="formTime">Time</label>
+          <input required type="time" name="time" class="mt-1 w-full rounded-xl px-3 py-2 text-sm border card-2" style="border-color: var(--line);">
+        </div>
+      </div>
+      <div>
+        <label class="text-xs font-semibold" style="color: var(--ink-soft);" data-i18n="formLocation">Location</label>
+        <input required name="location" class="mt-1 w-full rounded-xl px-3 py-2 text-sm border card-2" style="border-color: var(--line);">
+      </div>
+      <div>
+        <label class="text-xs font-semibold" style="color: var(--ink-soft);" data-i18n="formDesc">Description (optional)</label>
+        <textarea name="desc" rows="2" class="mt-1 w-full rounded-xl px-3 py-2 text-sm border card-2" style="border-color: var(--line);"></textarea>
+      </div>
+      <div>
+        <label class="text-xs font-semibold mb-1 block" style="color: var(--ink-soft);" data-i18n="formColor">Card Color</label>
+        <div id="colorPicker" class="flex gap-2"></div>
+        <input type="hidden" name="color" value="0">
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button type="button" class="close-modal flex-1 rounded-full py-2.5 text-sm font-semibold border" data-target="addEventModal" style="border-color: var(--line);" data-i18n="cancel">Cancel</button>
+        <button type="submit" class="flex-1 rounded-full py-2.5 text-sm font-semibold text-white brand-btn" data-i18n="saveEvent">Save Event</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<div id="registerModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop bg-black/40">
+  <div class="card rounded-2xl w-full max-w-sm p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="font-bold text-lg" data-i18n="registerFor">Register for</h3>
+      <button class="close-modal p-1 rounded-lg" style="color: var(--ink-soft);" data-target="registerModal">✕</button>
+    </div>
+    <p id="registerEventName" class="text-sm font-semibold brand-text mb-3"></p>
+    <form id="registerForm" class="space-y-3">
+      <div>
+        <label class="text-xs font-semibold" style="color: var(--ink-soft);" data-i18n="formName">Full Name</label>
+        <input required name="name" class="mt-1 w-full rounded-xl px-3 py-2 text-sm border card-2" style="border-color: var(--line);">
+      </div>
+      <div>
+        <label class="text-xs font-semibold" style="color: var(--ink-soft);" data-i18n="formEmail">Email or Phone</label>
+        <input required name="contact" class="mt-1 w-full rounded-xl px-3 py-2 text-sm border card-2" style="border-color: var(--line);">
+      </div>
+      <button type="submit" class="w-full rounded-full py-2.5 text-sm font-semibold text-white brand-btn mt-2" data-i18n="confirmRegister">Confirm Registration</button>
+    </form>
+  </div>
+</div>
+
+
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] hidden px-5 py-3 rounded-full text-sm font-semibold text-white shadow-lg" style="background: var(--brand-ink);"></div>
+
+<script>
+const dict = {
+  en: {
+    appName: "Campus Event", searchPlaceholder: "Search events...", logIn: "Log In",
+    navHome: "Home", navEvents: "Events", navMyEvents: "My Events", navAddEvent: "Add Event",
+    brandTitle: "Better Campus", brandSub: "Better Future", joinCommunity: "Join Community",
+    helpSupport: "Help & Support", logOut: "Log Out",
+    heroTag: "✦ Welcome to Campus Event", heroTitle: "Discover Amazing Campus Events",
+    heroDesc: "Join events, make new friends, and be an active part of our growing campus community.",
+    exploreEvents: "Explore Events →", viewCalendar: "View Calendar",
+    upcomingEvents: "Upcoming Events", viewAll: "View All →",
+    joinCommunityTitle: "Join Our Community", joinCommunityDesc: "Be part of something bigger. Meet, learn, grow together!",
+    getStarted: "Get Started →", featuredEvents: "Featured Events", allEvents: "All Events",
+    addEvent: "Add Event", viewDetails: "View Details →", register: "Register", registered: "Registered ✓",
+    addEventTitle: "Add New Event", formTitle: "Event Title", formDate: "Date", formTime: "Time",
+    formLocation: "Location", formDesc: "Description (optional)", formColor: "Card Color",
+    cancel: "Cancel", saveEvent: "Save Event", registerFor: "Register for", formName: "Full Name",
+    formEmail: "Email or Phone", confirmRegister: "Confirm Registration",
+    noRegistrations: "You haven't registered for any events yet.",
+    contactUs: "Contact Us", quickLinks: "Quick Links",
+    footerTagline: "Discover, join, and organize campus events all in one place.",
+    footerRights: "© 2026 Campus Event. All rights reserved.",
+    eventAdded: "Event added successfully!", registerSuccess: "Registered successfully!",
+    removeRegistration: "Cancel Registration"
+  },
+  km: {
+    appName: "ព្រឹត្តិការណ៍សាកលវិទ្យាល័យ", searchPlaceholder: "ស្វែងរកព្រឹត្តិការណ៍...", logIn: "ចូលគណនី",
+    navHome: "ទំព័រដើម", navEvents: "ព្រឹត្តិការណ៍", navMyEvents: "ព្រឹត្តិការណ៍របស់ខ្ញុំ", navAddEvent: "បន្ថែមព្រឹត្តិការណ៍",
+    brandTitle: "សាកលវិទ្យាល័យប្រសើរ", brandSub: "អនាគតកាន់តែល្អ", joinCommunity: "ចូលរួមសហគមន៍",
+    helpSupport: "ជំនួយ", logOut: "ចាកចេញ",
+    heroTag: "✦ សូមស្វាគមន៍មកកាន់ Campus Event", heroTitle: "ស្វែងរកព្រឹត្តិការណ៍សាកលវិទ្យាល័យដ៏អស្ចារ្យ",
+    heroDesc: "ចូលរួមព្រឹត្តិការណ៍ ស្គាល់មិត្តភ័ក្តិថ្មី និងក្លាយជាផ្នែកសកម្មនៃសហគមន៍សាកលវិទ្យាល័យរបស់យើង។",
+    exploreEvents: "រុករកព្រឹត្តិការណ៍ →", viewCalendar: "មើលប្រតិទិន",
+    upcomingEvents: "ព្រឹត្តិការណ៍នាពេលខាងមុខ", viewAll: "មើលទាំងអស់ →",
+    joinCommunityTitle: "ចូលរួមសហគមន៍របស់យើង", joinCommunityDesc: "ក្លាយជាផ្នែកនៃអ្វីមួយធំជាង។ ជួបគ្នា រៀនសូត្រ រីកចម្រើនជាមួយគ្នា!",
+    getStarted: "ចាប់ផ្តើម →", featuredEvents: "ព្រឹត្តិការណ៍លេចធ្លោ", allEvents: "ព្រឹត្តិការណ៍ទាំងអស់",
+    addEvent: "បន្ថែមព្រឹត្តិការណ៍", viewDetails: "មើលព័ត៌មានលម្អិត →", register: "ចុះឈ្មោះ", registered: "បានចុះឈ្មោះ ✓",
+    addEventTitle: "បន្ថែមព្រឹត្តិការណ៍ថ្មី", formTitle: "ចំណងជើងព្រឹត្តិការណ៍", formDate: "កាលបរិច្ឆេទ", formTime: "ម៉ោង",
+    formLocation: "ទីតាំង", formDesc: "ការពិពណ៌នា (ស្រេចចិត្ត)", formColor: "ពណ៌កាត",
+    cancel: "បោះបង់", saveEvent: "រក្សាទុកព្រឹត្តិការណ៍", registerFor: "ចុះឈ្មោះសម្រាប់", formName: "ឈ្មោះពេញ",
+    formEmail: "អ៊ីមែល ឬលេខទូរស័ព្ទ", confirmRegister: "បញ្ជាក់ការចុះឈ្មោះ",
+    noRegistrations: "អ្នកមិនទាន់បានចុះឈ្មោះចូលរួមព្រឹត្តិការណ៍ណាមួយនៅឡើយទេ។",
+    contactUs: "ទាក់ទងមកយើង", quickLinks: "តំណភ្ជាប់រហ័ស",
+    footerTagline: "ស្វែងរក ចូលរួម និងរៀបចំព្រឹត្តិការណ៍សាកលវិទ្យាល័យនៅកន្លែងតែមួយ។",
+    footerRights: "© ២០២៦ Campus Event។ រក្សាសិទ្ធិគ្រប់យ៉ាង។",
+    eventAdded: "បានបន្ថែមព្រឹត្តិការណ៍ដោយជោគជ័យ!", registerSuccess: "បានចុះឈ្មោះដោយជោគជ័យ!",
+    removeRegistration: "លុបការចុះឈ្មោះ"
+  }
+};
+let lang = localStorage.getItem('ce_lang') || 'en';
+
+const flagSvg = {
+  en: '<svg width="30" height="30" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="60" fill="#012169"/><path d="M0 0 60 60M60 0 0 60" stroke="#fff" stroke-width="10"/><path d="M0 0 60 60M60 0 0 60" stroke="#C8102E" stroke-width="3.6"/><path d="M30 0V60M0 30H60" stroke="#fff" stroke-width="16"/><path d="M30 0V60M0 30H60" stroke="#C8102E" stroke-width="6"/></svg>',
+  km: '<svg width="30" height="30" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="15" y="0" fill="#032EA1"/><rect width="60" height="30" y="15" fill="#E00025"/><rect width="60" height="15" y="45" fill="#032EA1"/><g transform="translate(30,30)" fill="#fff"><rect x="-15" y="6" width="30" height="4"/><rect x="-11.5" y="1" width="23" height="5.4"/><rect x="-8" y="-4.5" width="16" height="5.6"/><polygon points="0,-15 5,-4.5 -5,-4.5"/><rect x="-1.3" y="-15" width="2.6" height="5"/></g></svg>'
+};
+
+function t(key){ return (dict[lang] && dict[lang][key]) || dict.en[key] || key; }
+
+function applyI18n(){
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    el.textContent = t(el.getAttribute('data-i18n'));
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
+    el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+  });
+  document.getElementById('langBtnFlag').innerHTML = flagSvg[lang];
+  document.querySelectorAll('.lang-opt').forEach(btn=>{
+    const active = btn.getAttribute('data-lang') === lang;
+    btn.style.background = active ? 'var(--brand-soft)' : 'transparent';
+    btn.style.color = active ? 'var(--brand)' : 'var(--ink)';
+    const fw = btn.querySelector('.lang-opt-flag');
+    if(fw) fw.innerHTML = flagSvg[btn.getAttribute('data-lang')];
+  });
+  renderAll();
+}
+
+const langBtn = document.getElementById('langBtn');
+const langDropdown = document.getElementById('langDropdown');
+const langChevron = document.getElementById('langChevron');
+function closeLangDropdown(){
+  langDropdown.classList.add('hidden');
+  langChevron.style.transform = 'rotate(0deg)';
+  langBtn.setAttribute('aria-expanded','false');
+}
+langBtn.addEventListener('click', (e)=>{
+  e.stopPropagation();
+  const isOpen = !langDropdown.classList.contains('hidden');
+  if(isOpen){ closeLangDropdown(); }
+  else {
+    langDropdown.classList.remove('hidden');
+    langChevron.style.transform = 'rotate(180deg)';
+    langBtn.setAttribute('aria-expanded','true');
+  }
+});
+document.addEventListener('click', (e)=>{
+  if(!langDropdown.classList.contains('hidden') && !langDropdown.contains(e.target) && e.target !== langBtn){
+    closeLangDropdown();
+  }
+});
+document.querySelectorAll('.lang-opt').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const chosen = btn.getAttribute('data-lang');
+    closeLangDropdown();
+    if(chosen === lang) return;
+    lang = chosen;
+    localStorage.setItem('ce_lang', lang);
+    applyI18n();
+  });
+});
+
+
+const gradients = [
+  'linear-gradient(135deg,#2451E0,#5B84FF)',
+  'linear-gradient(135deg,#0EA5A5,#5EEAD4)',
+  'linear-gradient(135deg,#FF8A3D,#FFC98A)',
+  'linear-gradient(135deg,#8B5CF6,#C4B5FD)',
+  'linear-gradient(135deg,#EC4899,#F9A8D4)',
+  'linear-gradient(135deg,#16308C,#2451E0)'
+];
+const icons = [
+  '<path d="M4 7l8-4 8 4-8 4-8-4Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 7v6c0 2 3.5 5 8 5s8-3 8-5V7" stroke="white" stroke-width="1.6" stroke-linejoin="round"/>',
+  '<rect x="4" y="5" width="16" height="14" rx="2" stroke="white" stroke-width="1.6"/><path d="M4 10h16" stroke="white" stroke-width="1.6"/>',
+  '<circle cx="12" cy="12" r="8" stroke="white" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="white" stroke-width="1.6" stroke-linecap="round"/>',
+  '<path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5L12 3Z" stroke="white" stroke-width="1.4" stroke-linejoin="round"/>'
+];
+
+const defaultEvents = [
+  {id:'e1', title:'Orientation Day', date:'2026-10-05', time:'08:00', location:'Campus Hall', desc:'Meet new students and get oriented with campus life.', color:0, seed:0},
+  {id:'e2', title:'Tech Workshop', date:'2026-10-08', time:'10:00', location:'Computer Lab', desc:'Hands-on workshop on modern web development.', color:1, seed:1},
+  {id:'e3', title:'Sport Day', date:'2026-10-12', time:'08:00', location:'Sports Field', desc:'A full day of friendly inter-class sports matches.', color:2, seed:2},
+  {id:'e4', title:'Club Activities', date:'2026-10-15', time:'09:00', location:'Main Hall', desc:'Explore and join student clubs and societies.', color:3, seed:3},
+];
+
+let events = JSON.parse(localStorage.getItem('ce_events') || 'null') || defaultEvents;
+let registrations = JSON.parse(localStorage.getItem('ce_registrations') || '{}');
+
+function saveEvents(){ localStorage.setItem('ce_events', JSON.stringify(events)); }
+function saveRegs(){ localStorage.setItem('ce_registrations', JSON.stringify(registrations)); }
+
+function fmtDate(d){
+  const dt = new Date(d + 'T00:00:00');
+  const locale = lang === 'km' ? 'km-KH' : 'en-US';
+  return dt.toLocaleDateString(locale, {month:'short', day:'numeric', year:'numeric'});
+}
+function fmtTime(tm){
+  const [h,m] = tm.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+}
+
+function eventCard(ev, featured){
+  const isReg = !!registrations[ev.id];
+  return `
+  <div class="card rounded-2xl overflow-hidden flex flex-col">
+    <div class="h-28 relative flex items-center justify-center" style="background:${gradients[ev.color % gradients.length]}">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none">${icons[ev.seed % icons.length]}</svg>
+    </div>
+    <div class="p-4 flex flex-col gap-2 flex-1">
+      <p class="font-bold text-sm">${escapeHtml(ev.title)}</p>
+      <div class="flex items-center gap-1.5 text-xs" style="color: var(--ink-soft);">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5" width="17" height="15" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 10h17" stroke="currentColor" stroke-width="1.6"/></svg>
+        <span>${fmtDate(ev.date)} • ${fmtTime(ev.time)}</span>
+      </div>
+      <div class="flex items-center gap-1.5 text-xs" style="color: var(--ink-soft);">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.4 7-11.5A7 7 0 0 0 5 9.5C5 14.6 12 21 12 21Z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="9.5" r="2.3" stroke="currentColor" stroke-width="1.6"/></svg>
+        <span>${escapeHtml(ev.location)}</span>
+      </div>
+      <div class="mt-auto pt-2 flex items-center gap-2">
+        <button class="flex-1 rounded-full brand-btn text-white text-xs font-semibold py-2 register-btn" data-id="${ev.id}" ${isReg ? 'disabled' : ''} style="${isReg ? 'opacity:.6;background:#16A34A;' : ''}">
+          ${isReg ? t('registered') : t('register')}
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function escapeHtml(s){
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+function renderAll(){
+  const upcoming = [...events].sort((a,b)=> (a.date+a.time).localeCompare(b.date+b.time)).slice(0,2);
+  document.getElementById('upcomingList').innerHTML = upcoming.map(ev => `
+    <div class="flex items-start gap-3">
+      <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style="background:${gradients[ev.color % gradients.length]}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">${icons[ev.seed % icons.length]}</svg>
+      </div>
+      <div>
+        <p class="text-sm font-semibold">${escapeHtml(ev.title)}</p>
+        <p class="text-xs" style="color: var(--ink-soft);">${fmtDate(ev.date)} • ${fmtTime(ev.time)}</p>
+        <p class="text-xs brand-text">${escapeHtml(ev.location)}</p>
+      </div>
+    </div>`).join('') || `<p class="text-xs" style="color:var(--ink-soft)">—</p>`;
+
+  document.getElementById('featuredGrid').innerHTML = events.slice(0,4).map(ev => eventCard(ev, true)).join('');
+
+  const q = (document.getElementById('searchInput').value || '').toLowerCase();
+  const filtered = events.filter(ev => ev.title.toLowerCase().includes(q) || ev.location.toLowerCase().includes(q));
+  document.getElementById('allEventsGrid').innerHTML = filtered.map(ev => eventCard(ev, false)).join('') ||
+    `<p class="col-span-full text-center text-sm py-10" style="color:var(--ink-soft)">No events found.</p>`;
+
+  const myIds = Object.keys(registrations);
+  const myEvs = events.filter(ev => myIds.includes(ev.id));
+  document.getElementById('myEventsGrid').innerHTML = myEvs.map(ev => eventCard(ev, false)).join('');
+  document.getElementById('myEventsEmpty').classList.toggle('hidden', myEvs.length > 0);
+
+  attachCardEvents();
+}
+
+function attachCardEvents(){
+  document.querySelectorAll('.register-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(btn.disabled) return;
+      const id = btn.getAttribute('data-id');
+      openRegisterModal(id);
+    });
+  });
+}
+
+function setView(view){
+  document.querySelectorAll('[data-view]').forEach(el=>{
+    el.classList.toggle('active', el.getAttribute('data-view') === view);
+  });
+  document.querySelectorAll('.nav-btn').forEach(b=>{
+    const active = b.getAttribute('data-nav') === view;
+    b.style.background = active ? 'var(--brand-soft)' : 'transparent';
+    b.style.color = active ? 'var(--brand)' : 'var(--ink)';
+  });
+  closeSidebar();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+document.querySelectorAll('[data-nav]').forEach(b=> b.addEventListener('click', ()=> setView(b.getAttribute('data-nav'))));
+document.getElementById('exploreBtn').addEventListener('click', ()=> setView('events'));
+
+
+const sidebar = document.getElementById('sidebar');
+const backdrop = document.getElementById('sidebarBackdrop');
+function openSidebar(){ sidebar.classList.remove('-translate-x-full'); backdrop.classList.remove('hidden'); }
+function closeSidebar(){ if(window.innerWidth < 768){ sidebar.classList.add('-translate-x-full'); backdrop.classList.add('hidden'); } }
+document.getElementById('hamburger').addEventListener('click', openSidebar);
+backdrop.addEventListener('click', closeSidebar);
+
+
+function openModal(id){ const m = document.getElementById(id); m.classList.remove('hidden'); m.classList.add('flex'); }
+function closeModalEl(id){ const m = document.getElementById(id); m.classList.add('hidden'); m.classList.remove('flex'); }
+document.querySelectorAll('.close-modal').forEach(b=> b.addEventListener('click', ()=> closeModalEl(b.getAttribute('data-target'))));
+
+['addEventNav','addEventBtnTop','addEventNavFooter'].forEach(id=>{
+  document.getElementById(id).addEventListener('click', ()=> openModal('addEventModal'));
+});
+
+const colorPicker = document.getElementById('colorPicker');
+gradients.forEach((g,i)=>{
+  const sw = document.createElement('button');
+  sw.type = 'button';
+  sw.className = 'w-7 h-7 rounded-full border-2';
+  sw.style.background = g;
+  sw.style.borderColor = i===0 ? 'var(--ink)' : 'transparent';
+  sw.addEventListener('click', ()=>{
+    document.querySelector('#addEventForm [name=color]').value = i;
+    [...colorPicker.children].forEach((c,j)=> c.style.borderColor = j===i ? 'var(--ink)' : 'transparent');
+  });
+  colorPicker.appendChild(sw);
+});
+
+document.getElementById('addEventForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const id = 'e' + Date.now();
+  const colorIdx = Number(fd.get('color')) || 0;
+  events.unshift({
+    id, title: fd.get('title'), date: fd.get('date'), time: fd.get('time'),
+    location: fd.get('location'), desc: fd.get('desc') || '', color: colorIdx, seed: events.length
+  });
+  saveEvents();
+  e.target.reset();
+  closeModalEl('addEventModal');
+  showToast(t('eventAdded'));
+  setView('events');
+});
+
+let pendingRegisterId = null;
+function openRegisterModal(id){
+  pendingRegisterId = id;
+  const ev = events.find(e=> e.id === id);
+  document.getElementById('registerEventName').textContent = ev ? ev.title : '';
+  openModal('registerModal');
+}
+document.getElementById('registerForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  registrations[pendingRegisterId] = { name: fd.get('name'), contact: fd.get('contact'), at: Date.now() };
+  saveRegs();
+  e.target.reset();
+  closeModalEl('registerModal');
+  showToast(t('registerSuccess'));
+  renderAll();
+});
+
+
+let toastTimer;
+function showToast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> el.classList.add('hidden'), 2200);
+}
+
+
+document.getElementById('searchInput').addEventListener('input', renderAll);
+
+
+['loginBtn','joinCommunityBtn','getStartedBtn','helpBtn','logoutBtn','calendarBtn'].forEach(id=>{
+  const el = document.getElementById(id);
+  if(el) el.addEventListener('click', ()=> showToast('✓'));
+});
+
+
+applyI18n();
+setView('home');
+</script>
+</body>
+</html>
