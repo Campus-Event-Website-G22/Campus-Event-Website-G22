@@ -1,4 +1,12 @@
 import './style.css'
+import sidebarMarkup from './sidebar.html?raw'
+import siteFooterMarkup from './site-footer.html?raw'
+import { initializeTranslation } from './translation'
+
+const sidebarMount = document.querySelector<HTMLElement>('#sidebar-mount')
+if (sidebarMount) sidebarMount.innerHTML = sidebarMarkup
+const siteFooterMount = document.querySelector<HTMLElement>('#site-footer-mount')
+if (siteFooterMount) siteFooterMount.innerHTML = siteFooterMarkup
 
 const searchInputs = document.querySelectorAll<HTMLInputElement>('.search-box')
 const eventsGrid = document.querySelector<HTMLElement>('#all-events-grid')
@@ -35,6 +43,7 @@ type CreatedEvent = {
 	location: string
 	description: string
 	image: string
+	detailsUrl?: string
 }
 
 const storedEventsKey = 'campus-event-created-events'
@@ -46,6 +55,24 @@ const adminAccounts = new Map([
 	['admin1@campus.edu', 'admin123'],
 	['admin2@campus.edu', 'admin123'],
 ])
+const archiveEventDetails: Record<string, Omit<CreatedEvent, 'id' | 'title' | 'image'>> = {
+	orientation: { date: '2026-04-25', time: '08:00', location: 'Central Campus Quad & Great Lawn', description: 'Welcome new students with campus introductions, tours, and student community activities.', detailsUrl: 'pages/orientatin.html' },
+	workshop: { date: '2025-04-28', time: '10:00', location: 'Central Campus Quad & Great Lawn', description: 'Explore technology topics and practice practical skills in this campus workshop.', detailsUrl: 'pages/workshop.html' },
+	sport: { date: '2026-04-25', time: '08:00', location: 'Central Campus Quad & Great Lawn', description: 'Join campus sports activities focused on teamwork, competition, and school spirit.', detailsUrl: 'pages/sport.html' },
+	club: { date: '2026-04-25', time: '08:00', location: 'Central Campus Quad & Great Lawn', description: 'Explore student clubs, meet members, and learn about campus activities.', detailsUrl: 'pages/club.html' },
+	career: { date: '2026-04-25', time: '08:00', location: 'Central Campus Quad & Great Lawn', description: 'Meet employers and explore career and internship opportunities.', detailsUrl: 'pages/career.html' },
+	community: { date: '2026-04-25', time: '08:00', location: 'Central Campus Quad & Great Lawn', description: 'Take part in campus community activities and connect with fellow students.', detailsUrl: 'pages/community.html' },
+	cv: { date: '2026-04-25', time: '08:00', location: 'Central Campus Quad & Great Lawn', description: 'Get practical help preparing a CV and practicing interview skills.', detailsUrl: 'pages/cv.html' },
+	english: { date: '2026-04-25', time: '08:00', location: 'Central Campus Quad & Great Lawn', description: 'Practice English conversation and build confidence with other students.', detailsUrl: 'pages/English.html' },
+	khmer: { date: '2026-04-25', time: '08:00', location: 'Central Campus Quad & Great Lawn', description: 'Celebrate Khmer New Year with cultural activities and the campus community.', detailsUrl: 'pages/khmer.html' },
+	party: { date: '2026-04-25', time: '08:00', location: 'Central Campus Quad & Great Lawn', description: 'Enjoy a relaxed gathering with classmates and campus friends.', detailsUrl: 'pages/party.html' },
+}
+const defaultEventDetailUrls: Record<string, string> = {
+	'event-1': 'pages/orientatin.html',
+	'event-2': 'pages/workshop.html',
+	'event-3': 'pages/sport.html',
+	'event-4': 'pages/club.html',
+}
 type RegisteredAccount = {
 	email: string
 	passwordHash: string
@@ -63,7 +90,7 @@ function isAdmin() {
 
 function requireAdminAction() {
 	if (!isAdmin()) {
-		location.hash = '#view-events'
+		location.href = 'events.html'
 		return false
 	}
 	return true
@@ -94,7 +121,7 @@ function isFavorite(eventId: string) {
 
 function addToMyEvents(event: CreatedEvent) {
 	if (!isAuthenticated()) {
-		location.hash = '#view-login'
+		location.href = 'index.html#view-login'
 		return false
 	}
 
@@ -109,6 +136,38 @@ function addToMyEvents(event: CreatedEvent) {
 function removeFromMyEvents(eventId: string) {
 	saveFavorites(getFavorites().filter((event) => event.id !== eventId))
 	renderMyEvents()
+}
+
+function createEventBookmarkButton(event: CreatedEvent) {
+	const button = document.createElement('button')
+	button.type = 'button'
+	button.className = 'event-bookmark-button'
+	button.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 4.75C6 4.34 6.34 4 6.75 4h10.5c.41 0 .75.34.75.75V21l-6-3.75L6 21V4.75Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>'
+	button.setAttribute('aria-pressed', String(isFavorite(event.id)))
+
+	const updateSavedState = () => {
+		const saved = isFavorite(event.id)
+		button.classList.toggle('is-saved', saved)
+		button.setAttribute('aria-pressed', String(saved))
+		button.setAttribute('aria-label', saved ? `Remove ${event.title} from My Events` : `Save ${event.title} to My Events`)
+		button.title = saved ? 'Remove from My Events' : 'Save to My Events'
+		button.querySelector('path')?.setAttribute('fill', saved ? 'currentColor' : 'none')
+	}
+
+	button.addEventListener('click', (clickEvent) => {
+		clickEvent.stopPropagation()
+		if (!isAuthenticated()) {
+			location.href = 'index.html#view-login'
+			return
+		}
+
+		if (isFavorite(event.id)) removeFromMyEvents(event.id)
+		else addToMyEvents(event)
+		updateSavedState()
+	})
+
+	updateSavedState()
+	return button
 }
 
 function getSearchableEvents() {
@@ -172,17 +231,26 @@ function showEventDetails(event: CreatedEvent) {
 	const actions = document.createElement('div')
 	actions.className = 'flex flex-col sm:flex-row gap-3'
 
-	const joinButton = document.createElement('a')
-	joinButton.href = isAuthenticated() ? '#view-myevents' : '#view-login'
-	joinButton.className = 'flex-1 blue-button text-white text-center py-2.5 rounded-lg text-sm font-semibold'
-	joinButton.textContent = isFavorite(event.id) ? 'Saved to My Events' : 'Add to My Events'
-	joinButton.addEventListener('click', (clickEvent) => {
-		clickEvent.preventDefault()
-		if (addToMyEvents(event)) {
-			joinButton.textContent = 'Saved to My Events'
-			modal.remove()
-		}
-	})
+	if (!isFavorite(event.id)) {
+		const joinButton = document.createElement('a')
+		joinButton.href = isAuthenticated() ? 'my-events.html' : 'index.html#view-login'
+		joinButton.className = 'flex-1 blue-button text-white text-center py-2.5 rounded-lg text-sm font-semibold'
+		joinButton.textContent = 'Add to My Events'
+		joinButton.addEventListener('click', (clickEvent) => {
+			clickEvent.preventDefault()
+			if (addToMyEvents(event)) modal.remove()
+		})
+		actions.append(joinButton)
+	}
+
+	const detailsUrl = event.detailsUrl ?? defaultEventDetailUrls[event.id]
+	if (detailsUrl) {
+		const fullDetailsLink = document.createElement('a')
+		fullDetailsLink.href = detailsUrl
+		fullDetailsLink.className = 'flex-1 px-4 py-2.5 border border-blue-200 rounded-lg text-sm font-semibold text-blue-600 hover:bg-blue-50 text-center'
+		fullDetailsLink.textContent = 'Full Event Details'
+		actions.append(fullDetailsLink)
+	}
 
 	const closeLink = document.createElement('button')
 	closeLink.type = 'button'
@@ -196,7 +264,7 @@ function showEventDetails(event: CreatedEvent) {
 		if (clickEvent.target === modal) close()
 	})
 
-	actions.append(joinButton, closeLink)
+	actions.append(closeLink)
 	panel.append(closeButton, image, title, meta, description, actions)
 	modal.append(panel)
 	document.body.append(modal)
@@ -276,10 +344,21 @@ function setupHeroCarousel() {
 
 	refreshHeroCarousel = () => {
 		const currentImage = images[activeSlide]
-		images = ['/img/Rectangle 87.png', ...Array.from(document.querySelectorAll<HTMLImageElement>('#all-events-grid .event-card img')).map((image) => image.src)]
+		const defaultHeroImages = [
+			'/img/Rectangle 87.png',
+			'/img/Rectangle 9.png',
+			'/img/Rectangle 12.png',
+			'/img/Rectangle 15.png',
+			'/img/Rectangle 18.png',
+			'/img/Orientation-Day.png',
+			'/img/Tech-Workshop.png',
+			'/img/Sport-Day.png',
+		]
+		const cardImages = Array.from(document.querySelectorAll<HTMLImageElement>('#all-events-grid .event-card img')).map((image) => image.src)
+		images = [...new Set([...defaultHeroImages, ...cardImages])]
 		heroSlideTrack.replaceChildren(...images.map((image) => {
 			const slide = document.createElement('div')
-			slide.className = 'min-w-full h-full bg-cover bg-center'
+			slide.className = 'hero-slide-image min-w-full h-full bg-cover bg-center'
 			slide.style.backgroundImage = `linear-gradient(90deg, rgba(2, 47, 112, 0.92), rgba(2, 66, 145, 0.65), rgba(2, 66, 145, 0.18)), url("${image}")`
 			return slide
 		}))
@@ -319,7 +398,11 @@ function setupHeroCarousel() {
 }
 
 function editEvent(event: CreatedEvent) {
-	if (!addEventForm || !requireAdminAction()) return
+	if (!requireAdminAction()) return
+	if (!addEventForm) {
+		location.href = `add-event.html?edit=${encodeURIComponent(event.id)}`
+		return
+	}
 
 	editingEventId = event.id
 	;(addEventForm.elements.namedItem('title') as HTMLInputElement).value = event.title
@@ -332,7 +415,6 @@ function editEvent(event: CreatedEvent) {
 		imagePreview.classList.remove('hidden')
 	}
 	if (eventSubmitButton) eventSubmitButton.textContent = 'Update Event'
-	location.hash = '#view-add-event'
 }
 
 function createEventCard(event: CreatedEvent) {
@@ -365,7 +447,7 @@ function createEventCard(event: CreatedEvent) {
 	description.textContent = event.description
 
 	const details = document.createElement('a')
-	details.href = '#view-events'
+	details.href = 'events.html'
 	details.className = 'flex-1 block text-center blue-button text-white rounded-lg py-2.5 text-xs font-semibold'
 	details.textContent = 'View Details'
 	details.addEventListener('click', (clickEvent) => {
@@ -398,8 +480,55 @@ function createEventCard(event: CreatedEvent) {
 	actions.append(details)
 	if (isAdmin()) actions.append(editButton, deleteButton)
 	content.append(title, date, location, description, actions)
-	card.append(image, content)
+	card.append(image, content, createEventBookmarkButton(event))
 	return card
+}
+
+function getStaticCardEvent(card: HTMLElement): CreatedEvent | null {
+	const image = card.querySelector<HTMLImageElement>('img')
+	const heading = card.querySelector('h2, h3')
+	if (!image || !heading) return null
+
+	const archiveLink = card.querySelector<HTMLAnchorElement>('.archive-event-detail')
+	if (archiveLink) {
+		const archiveId = archiveLink.dataset.eventId ?? ''
+		const details = archiveEventDetails[archiveId]
+		if (!details) return null
+		return {
+			id: `archive-${archiveId}`,
+			title: heading.textContent?.trim() ?? 'Campus Event',
+			image: image.src,
+			...details,
+		}
+	}
+
+	const modalLink = card.querySelector<HTMLAnchorElement>('a[href^="#modal-event-"]')
+	const modalId = modalLink?.getAttribute('href')?.slice(1)
+	const favoriteLink = modalId ? document.getElementById(modalId)?.querySelector<HTMLAnchorElement>('.favorite-event') : null
+	if (!favoriteLink) return null
+
+	const data = favoriteLink.dataset
+	const eventId = data.eventId
+	if (!eventId || !data.date || !data.time) return null
+
+	return {
+		id: eventId,
+		title: data.title ?? heading.textContent?.trim() ?? 'Campus Event',
+		date: data.date,
+		time: data.time,
+		location: data.location ?? '',
+		description: document.getElementById(modalId!)?.querySelector('p.text-gray-600')?.textContent?.trim() ?? '',
+		image: image.src,
+		detailsUrl: defaultEventDetailUrls[eventId],
+	}
+}
+
+function setupStaticEventBookmarks() {
+	document.querySelectorAll<HTMLElement>('.event-card').forEach((card) => {
+		if (card.querySelector('.event-bookmark-button')) return
+		const event = getStaticCardEvent(card)
+		if (event) card.append(createEventBookmarkButton(event))
+	})
 }
 
 function loadCreatedEvents() {
@@ -424,9 +553,27 @@ function saveCreatedEvent(event: CreatedEvent) {
 	localStorage.setItem(storedEventsKey, JSON.stringify([...savedEvents, event]))
 }
 
+function updateActiveSidebarLink() {
+	const currentPage = location.pathname.split('/').pop() || 'index.html'
+	document.querySelectorAll<HTMLAnchorElement>('.sidebar-link').forEach((link) => {
+		const linkPage = new URL(link.href, location.href).pathname.split('/').pop() || 'index.html'
+		if (linkPage === currentPage) link.setAttribute('aria-current', 'page')
+		else link.removeAttribute('aria-current')
+	})
+}
+
 function updateAuthUI() {
 	const authenticated = isAuthenticated()
 	const admin = isAdmin()
+	updateActiveSidebarLink()
+	document.querySelectorAll<HTMLElement>('[data-footer-authenticated]').forEach((link) => {
+		link.classList.toggle('hidden', !authenticated)
+		link.classList.toggle('block', authenticated)
+	})
+	document.querySelectorAll<HTMLElement>('[data-footer-admin]').forEach((link) => {
+		link.classList.toggle('hidden', !admin)
+		link.classList.toggle('block', admin)
+	})
 	loginLink?.classList.toggle('hidden', authenticated)
 	logoutLink?.classList.toggle('hidden', !authenticated)
 	myEventsLink?.classList.toggle('hidden', !authenticated)
@@ -434,9 +581,9 @@ function updateAuthUI() {
 	adminUsersLink?.classList.toggle('hidden', !admin)
 	if (myEventsSection) myEventsSection.style.display = authenticated ? '' : 'none'
 	renderMyEvents()
-	if (!admin && location.hash === '#view-add-event') location.hash = '#view-events'
-	if (!admin && location.hash === '#view-admin-users') location.hash = '#view-events'
-	if (!authenticated && location.hash === '#view-myevents') location.hash = '#view-login'
+	const currentPage = location.pathname.split('/').pop()
+	if (!admin && (currentPage === 'add-event.html' || currentPage === 'user-management.html')) location.replace('events.html')
+	if (!authenticated && currentPage === 'my-events.html') location.replace('index.html#view-login')
 	renderRegisteredUsers()
 }
 
@@ -595,8 +742,8 @@ logoutLink?.addEventListener('click', (event) => {
 
 addEventForm?.addEventListener('submit', async (event) => {
 	event.preventDefault()
-	if (!eventsGrid || !addEventForm || !isAdmin()) {
-		location.hash = '#view-events'
+	if (!addEventForm || !isAdmin()) {
+		location.href = 'events.html'
 		return
 	}
 
@@ -622,11 +769,15 @@ addEventForm?.addEventListener('submit', async (event) => {
 	if (editingEventId) {
 		const updatedEvents = savedEvents.map((savedEvent) => savedEvent.id === editingEventId ? updatedEvent : savedEvent)
 		localStorage.setItem(storedEventsKey, JSON.stringify(updatedEvents))
-		const existingCard = Array.from(eventsGrid.querySelectorAll<HTMLElement>('.event-card')).find((card) => card.dataset.eventId === editingEventId)
-		existingCard?.replaceWith(createEventCard(updatedEvent))
+		if (eventsGrid) {
+			const existingCard = Array.from(eventsGrid.querySelectorAll<HTMLElement>('.event-card')).find((card) => card.dataset.eventId === editingEventId)
+			existingCard?.replaceWith(createEventCard(updatedEvent))
+		}
 	} else {
 		saveCreatedEvent(updatedEvent)
-		eventsGrid.prepend(createEventCard(updatedEvent))
+		if (eventsGrid) {
+			eventsGrid.prepend(createEventCard(updatedEvent))
+		}
 	}
 	refreshHeroCarousel()
 
@@ -635,14 +786,44 @@ addEventForm?.addEventListener('submit', async (event) => {
 	addEventForm.reset()
 	imagePreview?.classList.add('hidden')
 	imagePreview?.removeAttribute('src')
-	location.hash = '#view-events'
+	location.href = 'events.html'
 	filterEvents(searchInputs[0]?.value ?? '')
 })
 
 loadCreatedEvents()
+setupStaticEventBookmarks()
+const initialSearch = new URLSearchParams(location.search).get('search') ?? ''
+if (initialSearch) {
+	searchInputs.forEach((input) => { input.value = initialSearch })
+	filterEvents(initialSearch)
+}
 updateAuthUI()
+if (addEventForm && isAdmin()) {
+	const editId = new URLSearchParams(location.search).get('edit')
+	if (editId) {
+		const event = (JSON.parse(localStorage.getItem(storedEventsKey) ?? '[]') as CreatedEvent[]).find((savedEvent) => savedEvent.id === editId)
+		if (event) editEvent(event)
+	}
+}
 setupHeroCarousel()
 window.addEventListener('hashchange', updateAuthUI)
+
+document.querySelectorAll<HTMLAnchorElement>('.archive-event-detail').forEach((detailsLink) => {
+	detailsLink.addEventListener('click', (event) => {
+		event.preventDefault()
+		const card = detailsLink.closest<HTMLElement>('.event-card')
+		const details = archiveEventDetails[detailsLink.dataset.eventId ?? '']
+		const image = card?.querySelector<HTMLImageElement>('img')
+		if (!card || !details || !image) return
+
+		showEventDetails({
+			id: `archive-${detailsLink.dataset.eventId}`,
+			title: card.querySelector('h2')?.textContent?.trim() ?? 'Campus Event',
+			image: image.src,
+			...details,
+		})
+	})
+})
 
 document.querySelectorAll<HTMLAnchorElement>('.favorite-event').forEach((favoriteButton) => {
 	favoriteButton.textContent = isFavorite(favoriteButton.dataset.eventId ?? '') ? 'Saved to My Events' : 'Add to My Events'
@@ -660,7 +841,7 @@ document.querySelectorAll<HTMLAnchorElement>('.favorite-event').forEach((favorit
 
 		if (!addToMyEvents(favoriteEvent)) return
 		favoriteButton.textContent = 'Saved to My Events'
-		location.hash = '#view-myevents'
+		location.href = 'my-events.html'
 	})
 })
 
@@ -676,4 +857,12 @@ searchInputs.forEach((searchInput) => {
 
 		filterEvents(searchTerm)
 	})
+	searchInput.addEventListener('keydown', (event) => {
+		if (event.key !== 'Enter') return
+		event.preventDefault()
+		const query = searchInput.value.trim()
+		if (query) location.href = `/events.html?search=${encodeURIComponent(query)}`
+	})
 })
+
+initializeTranslation()
