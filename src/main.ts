@@ -344,10 +344,21 @@ function setupHeroCarousel() {
 
 	refreshHeroCarousel = () => {
 		const currentImage = images[activeSlide]
-		images = ['/img/Rectangle 87.png', ...Array.from(document.querySelectorAll<HTMLImageElement>('#all-events-grid .event-card img')).map((image) => image.src)]
+		const defaultHeroImages = [
+			'/img/Rectangle 87.png',
+			'/img/Rectangle 9.png',
+			'/img/Rectangle 12.png',
+			'/img/Rectangle 15.png',
+			'/img/Rectangle 18.png',
+			'/img/Orientation-Day.png',
+			'/img/Tech-Workshop.png',
+			'/img/Sport-Day.png',
+		]
+		const cardImages = Array.from(document.querySelectorAll<HTMLImageElement>('#all-events-grid .event-card img')).map((image) => image.src)
+		images = [...new Set([...defaultHeroImages, ...cardImages])]
 		heroSlideTrack.replaceChildren(...images.map((image) => {
 			const slide = document.createElement('div')
-			slide.className = 'min-w-full h-full bg-cover bg-center'
+			slide.className = 'hero-slide-image min-w-full h-full bg-cover bg-center'
 			slide.style.backgroundImage = `linear-gradient(90deg, rgba(2, 47, 112, 0.92), rgba(2, 66, 145, 0.65), rgba(2, 66, 145, 0.18)), url("${image}")`
 			return slide
 		}))
