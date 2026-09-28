@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-100">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Event</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css">
+  <!-- Google Fonts - Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="font-sans antialiased text-slate-800 bg-slate-100 min-h-screen flex flex-col lg:flex-row overflow-x-hidden pb-[82px] lg:pb-0">
+
+  <!-- Mobile phone header -->
+  <div class="flex sm:hidden sticky top-0 z-[80] h-12 items-center justify-between bg-white border-b border-slate-200 text-slate-900 text-xs font-bold px-2">
+    <button class="w-9 h-9 flex items-center justify-center border-0 bg-transparent text-slate-600" aria-label="Back"><i class="fa-solid fa-chevron-left"></i></button>
+    <span>Event Details</span>
+    <button class="w-9 h-9 flex items-center justify-center border-0 bg-transparent text-slate-600" aria-label="More"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+  </div>
+
+  <aside
+    class="hidden md:flex lg:w-64 w-full bg-white lg:border-r border-b lg:border-b-0 border-slate-200 flex-shrink-0 flex-col justify-between p-4 lg:p-5 lg:h-screen lg:sticky lg:top-0 z-30">
+    <div class="w-full lg:space-y-6">
+      <!-- App Brand Logo -->
+      <img src="/campus-pulse-logo.svg" alt="CampusPulse Student Community" class="w-full max-w-[220px] h-auto mb-3 lg:mb-0">
+
+      <!-- Navigation Links -->
+      <nav class="flex flex-col gap-1.5 pt-0 lg:pt-2 w-full">
+        <a href="../index.html"
+          class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 transition-all text-sm font-medium w-full">
+          <i class="fa-regular fa-house fa-xl"></i>
+          <span>Home</span>
+        </a>
+        <a href="../events.html"
+          class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl bg-brand-50 text-brand-600 font-semibold text-sm shadow-sm w-full">
+          <i class="fa-regular fa-calendar fa-xl w-5 text-brand-600"></i>
+          <span>Events</span>
+        </a>
+        <a href="../my-events.html"
+          class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 transition-all text-sm font-medium w-full">
+          <i class="fa-regular fa-bookmark fa-xl"></i>
+          <span>My Events</span>
+        </a>
+      </nav>
+  </aside>
+
+  <main class="flex-1 min-w-0 w-full max-w-7xl mx-auto px-3 sm:px-4 md:px-5 lg:px-8 py-4 lg:py-6 space-y-4 lg:space-y-6">
+
+    <!-- Top Bar Navigation & Search -->
+    <header class="hidden sm:flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200">
+
+      <!-- Search & Language Switcher -->
+      <div class="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto">
+        <div class="relative w-full sm:w-72 md:w-80">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+          <input type="text" placeholder="Search campus events..."
+            class="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-full text-xs focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 shadow-sm transition-all">
+        </div>
+        <button
+          class="flex items-center space-x-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full text-slate-700 text-xs font-medium hover:bg-slate-50 shadow-sm">
+          <span>EN</span>
+          <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 ml-0.5"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="flex items-start justify-between gap-3 sm:gap-4 flex-col sm:flex-row">
+      <div>
+        <div class="flex items-center space-x-3">
+          <h1 class="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 tracking-tight">Career Fair</h1>
+          <span
+            class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-[9px] sm:text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+            CONFIRMED & UPCOMING
+          </span>
+        </div>
+
+        <!-- Main Content 2-Column Desktop Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+
+          <!-- Left Column (Hero + Details + Agenda) -->
+          <div class="col-span-1 lg:col-span-8 space-y-4 lg:space-y-6 min-w-0">
+
+            <!-- Banner Image -->
+            <div class="relative rounded-2xl overflow-hidden shadow-sm border border-slate-200 bg-slate-900 h-44 sm:h-60 lg:h-80 group">
+              <img src="../img/Career-Fair.png" alt="Orientation Day Crowd"
+                class="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700">
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
+
+              <div class="absolute bottom-4 left-4 right-4 flex justify-between items-end text-white">
+                <div
+                  class="bg-slate-900/70 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/20 text-xs flex items-center gap-2">
+                  <i class="fa-regular fa-camera text-slate-300"></i>
+                  <span>Central Campus Quad & Great Lawn</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mobile phone event summary -->
+            <div class="hidden">
+              <h1>Career Fair</h1>
+              <div class="grid grid-cols-2 gap-2">
+                <div><i class="fa-regular fa-calendar"></i><span>Apr 25, 2026<br><small>08:00 AM – 04:00 PM</small></span></div>
+                <div><i class="fa-solid fa-location-dot"></i><span>Campus Hall – Central Campus<br><small>PNC</small></span></div>
+              </div>
+              <div class="grid grid-cols-2 gap-2 mt-2">
+                <a href="https://calendar.google.com/calendar/u/0/r"><i class="fa-regular fa-calendar"></i> Add to Calendar</a>
+                <button type="button"><i class="fa-solid fa-share-nodes"></i> Share Friends</button>
+              </div>
+            </div>
+
+            <!-- About section -->
+            <section class="bg-white rounded-2xl p-4 sm:p-5 lg:p-6 shadow-sm border border-slate-200 space-y-4">
+              <div class="flex items-center space-x-2.5 border-b border-slate-100 pb-3">
+                <i class="fa-solid fa-circle-info text-brand-600 text-lg"></i>
+                <h2 class="text-base font-bold text-slate-900">About the Event</h2>
+              </div>
+
+              <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                PNC Student Volleyball Match was an exciting sports event organized for PNC students to come together,
+                compete, and support their teams. The event brought students from different classes together on the
+                volleyball court, creating an energetic atmosphere filled with teamwork, competition, cheering, and
+                school spirit.
+              </p>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-2">
+                <!-- What to Expect -->
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+                  <h3 class="font-bold text-xs text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-star text-amber-500 text-xs"></i> What to Expect
+                  </h3>
+                  <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
+                    <li>Exciting volleyball matches between team</li>
+                    <li>Teamwork and communication between players</li>
+                    <li>Cheering and support from classmates</li>
+                    <li>Celebration of the winning team</li>
+                  </ul>
+                </div>
+
+                <!-- Who Should Attend -->
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+                  <h3 class="font-bold text-xs text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-user-graduate text-brand-600 text-xs"></i> Who Should Attend
+                  </h3>
+                  <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
+                    <li>Volleyball players and team members</li>
+                    <li>Classmates and friends of participating teams</li>
+                    <li>Students who enjoy sports and school activities</li>
+                    <li>Anyone who wants to support the PNC community</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div
+                class="p-3.5 bg-brand-50/70 border border-brand-200/80 rounded-xl text-xs text-slate-700 flex items-start space-x-3">
+                <i class="fa-solid fa-lightbulb text-brand-600 text-base mt-0.5"></i>
+                <div>
+                  <strong class="font-semibold text-slate-900">Important Note:</strong>Please arrive early to support
+                  the players and avoid missing the beginning of the match. Players should bring their appropriate
+                  sportswear, water, and any necessary volleyball equipment. Most importantly, come ready to cheer, have
+                  fun, and support your team!
+                </div>
+              </div>
+            </section>
+
+            <!-- Schedule & Agenda -->
+            <section class="bg-white rounded-2xl p-4 sm:p-5 lg:p-6 shadow-sm border border-slate-200 space-y-5">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center space-x-2.5">
+                  <i class="fa-solid fa-clock text-brand-600 text-lg"></i>
+                  <h2 class="text-base font-bold text-slate-900">Schedule & Agenda</h2>
+                </div>
+                <span class="text-xs text-slate-400 font-medium">Detailed Timeline</span>
+              </div>
+
+              <div
+                class="relative pl-5 sm:pl-6 space-y-4 sm:space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
+
+                <!-- Timeline Entry 1 -->
+                <div class="relative">
+                  <div class="absolute -left-6 top-1 w-5 h-5 rounded-full bg-brand-600 border-4 border-white shadow-sm">
+                  </div>
+                  <div class="bg-slate-50 p-3 sm:p-3.5 rounded-xl border border-slate-200/80 space-y-1">
+                    <div class="flex items-center justify-between">
+                      <span
+                        class="text-xs font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded border border-brand-100">08:00
+                        AM – 08:30 AM</span>
+                    </div>
+                    <h4 class="font-bold text-xs text-slate-900 pt-1">Team Check-in & Preparation</h4>
+                    <p class="text-xs text-slate-600">Players arrive at the venue, check in with the organizers, prepare
+                      their equipment, and get ready for the match.</p>
+                  </div>
+                </div>
+
+                <!-- Timeline Entry 2 -->
+                <div class="relative">
+                  <div class="absolute -left-6 top-1 w-5 h-5 rounded-full bg-brand-600 border-4 border-white shadow-sm">
+                  </div>
+                  <div class="bg-slate-50 p-3 sm:p-3.5 rounded-xl border border-slate-200/80 space-y-1">
+                    <div class="flex items-center justify-between">
+                      <span
+                        class="text-xs font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded border border-brand-100">08:30
+                        AM – 09:00 AM</span>
+                    </div>
+                    <h4 class="font-bold text-xs text-slate-900 pt-1">Warm-up & Team Preparation</h4>
+                    <p class="text-xs text-slate-600">OBoth teams warm up, practice basic volleyball skills, and prepare
+                      themselves physically and mentally for the competition..</p>
+                  </div>
+                </div>
+
+                <!-- Timeline Entry 3 -->
+                <div class="relative">
+                  <div class="absolute -left-6 top-1 w-5 h-5 rounded-full bg-brand-600 border-4 border-white shadow-sm">
+                  </div>
+                  <div class="bg-slate-50 p-3 sm:p-3.5 rounded-xl border border-slate-200/80 space-y-1">
+                    <div class="flex items-center justify-between">
+                      <span
+                        class="text-xs font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded border border-brand-100">09:00
+                        AM – 09:15 AM</span>
+                    </div>
+                    <h4 class="font-bold text-xs text-slate-900 pt-1">Opening & Team Introduction</h4>
+                    <p class="text-xs text-slate-600">The organizers welcome the students and supporters, introduce the
+                      participating teams, and explain the match rules and schedule.</p>
+                  </div>
+                </div>
+
+                <!-- Timeline Entry 4 -->
+                <div class="relative">
+                  <div class="absolute -left-6 top-1 w-5 h-5 rounded-full bg-brand-600 border-4 border-white shadow-sm">
+                  </div>
+                  <div class="bg-slate-50 p-3 sm:p-3.5 rounded-xl border border-slate-200/80 space-y-1">
+                    <div class="flex items-center justify-between">
+                      <span
+                        class="text-xs font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded border border-brand-100">09:15
+                        AM – 10:30 AM</span>
+                    </div>
+                    <h4 class="font-bold text-xs text-slate-900 pt-1">Main Volleyball Match</h4>
+                    <p class="text-xs text-slate-600">The teams compete in an exciting volleyball match. Players
+                      demonstrate teamwork, communication, skills, and determination while supporters cheer for their
+                      teams.</p>
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+            <!-- Venue & Location -->
+            <section class="bg-white rounded-2xl p-4 sm:p-5 lg:p-6 shadow-sm border border-slate-200 space-y-4">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center space-x-2.5">
+                  <i class="fa-solid fa-map-location-dot text-brand-600 text-lg"></i>
+                  <h2 class="text-base font-bold text-slate-900">Venue & Location</h2>
+                </div>
+                <a href="https://www.google.com/maps/place/Passerelles+num%C3%A9riques+Cambodia+(PNC)/@11.5508551,104.8782117,856m/data=!3m1!1e3!4m14!1m7!3m6!1s0x310951add5e2cd81:0x171e0b69c7c6f7ba!2sPasserelles+num%C3%A9riques+Cambodia+(PNC)!8m2!3d11.5508551!4d104.8830826!16s%2Fg%2F1tdbt6hf!3m5!1s0x310951add5e2cd81:0x171e0b69c7c6f7ba!8m2!3d11.5508551!4d104.8830826!16s%2Fg%2F1tdbt6hf?entry=ttu&g_ep=EgoyMDI2MDkyMC4wIKXMDSoASAFQAw%3D%3D"
+                  class="text-xs font-bold text-brand-600 hover:underline">Open in Campus Map →</a>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 items-center">
+                <div class="space-y-3">
+                  <h3 class="font-bold text-xs text-slate-900">Campus Hall</h3>
+                  <p class="text-xs text-slate-600 leading-relaxed">
+                    BP 511, Phum Tropeang Chhuk (Borey Sorla) Sangtak, Street 371, Phnom Penh
+                  </p>
+
+                  <div class="space-y-2 text-xs text-slate-600">
+                    <div class="flex items-center gap-2">
+                      <i class="fa-solid fa-square-parking text-slate-400 w-4"></i>
+                      <span><strong>Parking:</strong> Lot C and East Deck have open slots.</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <i class="fa-solid fa-bus text-slate-400 w-4"></i>
+                      <span><strong>Transit:</strong> Campus Shuttle stops every 10 mins.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <iframe class="w-full h-64 sm:h-72 lg:h-80 rounded-xl" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3909.013973704625!2d104.8830826!3d11.5508551!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310951add5e2cd81%3A0x171e0b69c7c6f7ba!2sPasserelles%20num%C3%A9riques%20Cambodia%20(PNC)!5e0!3m2!1sen!2skh!4v1790401367954!5m2!1sen!2skh" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Campus Hall map"></iframe>
+              </div>
+            </section>
+
+          </div>
+
+          <!-- Right Column (Sticky Registration Ticket Box) -->
+          <div class="hidden lg:block col-span-1 lg:col-span-4 min-w-0">
+            <div class="bg-white rounded-2xl p-4 sm:p-5 lg:p-6 shadow-sm border border-slate-200 lg:sticky lg:top-6 space-y-4 lg:space-y-5">
+              <div class="flex items-start justify-between border-b border-slate-100 pb-4">
+                <div>
+                  <span class="text-2xl font-black text-slate-900">Free Entry</span>
+                  <p class="text-xs text-slate-500 mt-0.5">Open for all registered students</p>
+                </div>
+                <span
+                  class="bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-1 rounded-lg border border-emerald-200">
+                  Seats Available
+                </span>
+              </div>
+
+              <div class="space-y-1.5">
+                <div class="flex justify-between text-xs font-medium">
+                  <span class="text-slate-600">Venue Capacity</span>
+                  <span class="text-brand-600 font-bold">78% Capacity</span>
+                </div>
+                <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div class="bg-brand-600 h-full rounded-full w-[78%]"></div>
+                </div>
+              </div>
+
+              <div class="space-y-3.5">
+                <a href="register.html"><button
+                    class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-500/20 flex items-center justify-center gap-2 text-xs transition-all">
+                    <i class="fa-regular fa-user"></i>
+                    <span>Register To Attend</span>
+                  </button></a>
+
+                <a href="https://calendar.google.com/calendar/u/0/r"><button
+                    class="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold border border-slate-200 rounded-xl flex items-center justify-center gap-2 text-xs transition-all">
+                    <i class="fa-regular fa-calendar"></i>
+                    <span>Add to Calendar</span>
+                  </button></a>
+              </div>
+
+              <div class="space-y-3 pt-3 border-t border-slate-100 text-xs">
+                <div class="flex items-start space-x-3 text-slate-600">
+                  <i class="fa-regular fa-calendar text-brand-600 w-4 mt-0.5"></i>
+                  <div>
+                    <strong class="text-slate-900 block font-semibold">Date</strong>
+                    <span>Friday, August 29, 2025</span>
+                  </div>
+                </div>
+
+                <div class="flex items-start space-x-3 text-slate-600">
+                  <i class="fa-regular fa-alarm-clock text-brand-600 w-4 mt-0.5"></i>
+                  <div>
+                    <strong class="text-slate-900 block font-semibold">Time</strong>
+                    <span>08:00 AM – 04:00 PM EST</span>
+                  </div>
+                </div>
+
+                <div class="flex items-start space-x-3 text-slate-600">
+                  <i class="fa-solid fa-location-dot text-brand-600 w-4 mt-0.5"></i>
+                  <div>
+                    <strong class="text-slate-900 block font-semibold">Venue</strong>
+                    <span>PNC B32</span>
+                  </div>
+                </div>
+
+                <div class="flex items-start space-x-3 text-slate-600">
+                  <i class="fa-regular fa-building text-brand-600 w-4 mt-0.5"></i>
+                  <div>
+                    <strong class="text-slate-900 block font-semibold">Organizer</strong>
+                    <span>PNC</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Other Campus Events Section - Responsive horizontal cards -->
+        <section class="pt-6 border-t border-slate-200/80 space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-bold text-slate-900 tracking-tight">Other Campus Events</h2>
+              <p class="text-xs text-slate-500 mt-0.5">Explore upcoming activities hosted on campus this month</p>
+            </div>
+            <a href="../events.html" class="text-xs font-bold text-brand-600 hover:underline flex items-center gap-1">
+              <span>View All</span>
+              <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </a>
+          </div>
+
+          <!-- Responsive cards on desktop -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+
+            <!-- Card 1: Tech Workshops -->
+            <div
+              class="card bg-white rounded-2xl transition duration-300 hover:-translate-y-2 hover:shadow-xl relative">
+
+
+              <div class="relative">
+                <img src="../img/Tech-Workshop.png" alt="Orientation Day"
+                  class="w-full h-36 sm:h-44 lg:h-48 object-cover rounded-t-2xl">
+
+                <button
+                  class="absolute top-3 right-3 bg-gray-300 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-600 transition duration-300">
+                  <i class="fa-solid fa-bookmark text-lg"></i>
+                </button>
+              </div>
+
+
+              <div class="px-4 sm:px-5 lg:px-7 mt-2">
+
+                <h1 class="font-semibold text-lg sm:text-xl lg:text-2xl">
+                  Tech Workshop
+                </h1>
+
+                <p class="text-gray-400 text-xs sm:text-sm">
+                  <i class="fa-regular fa-calendar-days"></i>
+                  Apr 28, 2025 • 10:00 AM
+                </p>
+
+                <p class="text-gray-400 text-xs sm:text-sm">
+                  <i class="fa-solid fa-location-dot"></i>
+                  Computer Lab
+                </p>
+
+                <a href="workshop.html"><button class="bg-blue-600 text-white px-4 sm:px-7 py-2.5 sm:py-3 mb-4 sm:mb-5 mt-3 self-center w-full rounded-2xl text-sm">
+                  View Details →
+                </button></a>
+
+              </div>
+            </div>
+
+
+            <!-- Card 2: Sports Day -->
+            <div
+              class="card bg-white rounded-2xl transition duration-300 hover:-translate-y-2 hover:shadow-xl relative">
+
+
+              <div class="relative">
+                <img src="../img/Orientation-Day.png" alt="Orientation Day" class="w-full h-36 sm:h-44 lg:h-48 object-cover rounded-t-2xl">
+
+                <button
+                  class="absolute top-3 right-3 bg-gray-300 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-600 transition duration-300">
+                  <i class="fa-solid fa-bookmark text-lg"></i>
+                </button>
+              </div>
+
+
+              <div class="px-4 sm:px-5 lg:px-7 mt-2">
+
+                <h1 class="font-semibold text-lg sm:text-xl lg:text-2xl">
+                  Orientation Day
+                </h1>
+
+                <p class="text-gray-400 text-xs sm:text-sm">
+                  <i class="fa-regular fa-calendar-days"></i>
+                  May 2, 2025 • 08:00 AM
+                </p>
+
+                <p class="text-gray-400 text-xs sm:text-sm">
+                  <i class="fa-solid fa-location-dot"></i>
+                  PNC
+                </p>
+
+                <a href="orientatin.html"><button class="bg-blue-600 text-white px-4 sm:px-7 py-2.5 sm:py-3 mb-4 sm:mb-5 mt-3 self-center w-full rounded-2xl text-sm">
+                  View Details →
+                </button></a>
+
+              </div>
+            </div>
+
+
+            <!-- Card 3: Career Fair -->
+            <div
+              class="card bg-white rounded-2xl transition duration-300 hover:-translate-y-2 hover:shadow-xl relative">
+
+
+              <div class="relative">
+                <img src="../img/Sport-Day.png" alt="Orientation Day" class="w-full h-36 sm:h-44 lg:h-48 object-cover rounded-t-2xl">
+
+                <button
+                  class="absolute top-3 right-3 bg-gray-300 text-white w-11 h-11 rounded-full flex items-center justify-center hover:bg-blue-600 transition duration-300">
+                  <i class="fa-solid fa-bookmark text-lg"></i>
+                </button>
+              </div>
+
+
+              <div class="px-4 sm:px-5 lg:px-7 mt-2">
+
+                <h1 class="font-semibold text-lg sm:text-xl lg:text-2xl">
+                  Sport Day
+                </h1>
+
+                <p class="text-gray-400 text-xs sm:text-sm">
+                  <i class="fa-regular fa-calendar-days"></i>
+                  May 5, 2025 • 09:00 AM
+                </p>
+
+                <p class="text-gray-400 text-xs sm:text-sm">
+                  <i class="fa-solid fa-location-dot"></i>
+                  Sports Field
+                </p>
+
+                <a href="sport.html"><button class="bg-blue-600 text-white px-4 sm:px-7 py-2.5 sm:py-3 mb-4 sm:mb-5 mt-3 self-center w-full rounded-2xl text-sm">
+                  View Details →
+                </button></a>
+
+              </div>
+            </div>
+
+          </div>
+        </section>
+        <footer class="hidden sm:block bg-blue-950 w-full mt-10">
+          <div class="w-full px-5 sm:px-6 md:px-10 py-8 sm:py-10">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 sm:gap-8">
+
+              <!-- BRAND -->
+              <div>
+                <img src="/campus-pulse-logo-light.svg" alt="CampusPulse Student Community" class="w-full max-w-[220px] h-auto">
+
+                <p class="text-slate-300 text-sm leading-6 mt-4 max-w-sm">
+                  Discover and join campus events.
+                  Make new friends and enjoy your campus life.
+                </p>
+              </div>
+
+              <!-- QUICK LINKS -->
+              <div>
+                <h3 class="text-xl font-bold text-white mb-4">
+                  Quick Links
+                </h3>
+
+                <div class="space-y-3 text-sm">
+                  <a href="../index.html" class="block text-slate-300 hover:text-white transition">
+                    Home
+                  </a>
+
+                  <a href="../events.html" class="block text-slate-300 hover:text-white transition">
+                    Events
+                  </a>
+
+                  <a href="../my-events.html" class="block text-slate-300 hover:text-white transition">
+                    My Events
+                  </a>
+
+                  <a href="#" class="block text-slate-300 hover:text-white transition">
+                    About
+                  </a>
+
+                  <a href="#" class="block text-slate-300 hover:text-white transition">
+                    Contact
+                  </a>
+                </div>
+              </div>
+
+              <!-- CONTACT -->
+              <div>
+                <h3 class="text-xl font-bold text-white mb-4">
+                  Contact Us
+                </h3>
+
+                <div class="space-y-3 text-sm text-slate-300">
+                  <p>📧 campus@university.edu</p>
+                  <p>📍 University Campus</p>
+                  <p>📞 +855 977 668 338</p>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- BOTTOM -->
+            <div class="border-t border-slate-700 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+
+              <p class="text-sm text-slate-400">
+                © 2026 CampusEvent. All rights reserved.
+              </p>
+
+              <div class="flex gap-5 text-sm">
+                <a href="#" class="text-slate-400 hover:text-white transition">
+                  Privacy Policy
+                </a>
+
+                <a href="#" class="text-slate-400 hover:text-white transition">
+                  Terms
+                </a>
+              </div>
+
+            </div>
+
+          </div>
+        </footer>
+  </main>
+
+
+  <!-- Mobile fixed bottom navigation / registration -->
+  <div class="fixed sm:hidden left-0 right-0 bottom-0 z-[100] bg-white border-t border-slate-200 shadow-[0_-4px_16px_rgba(15,23,42,0.08)]">
+    <div class="h-11 px-2.5 flex items-center justify-between gap-2">
+      <div>
+        <span>ADMISSION</span>
+        <strong>Free</strong>
+      </div>
+      <a href="register.html" class="flex-1 max-w-[190px] h-8 flex items-center justify-center gap-1.5 bg-blue-600 text-white rounded-full text-[9px] font-bold no-underline">Register for Free <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+    <nav class="h-11 grid grid-cols-3 border-t border-slate-100 bg-white">
+      <a href="../index.html"><i class="fa-regular fa-house"></i><span>Home</span></a>
+      <a href="../events.html" class="active"><i class="fa-regular fa-calendar"></i><span>Events</span></a>
+      <a href="../my-events.html"><i class="fa-regular fa-bookmark"></i><span>My Events</span></a>
+    </nav>
+  </div>
+
+  <script type="module" src="../src/archive-details.ts"></script>
+</body>
+
+</html>

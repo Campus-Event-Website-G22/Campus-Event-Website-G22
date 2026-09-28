@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Event | Campus Event</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #f7f9fc; color: #14213d; font-family: Inter, sans-serif; overflow-x: hidden; }
+    #menu { position: absolute; opacity: 0; pointer-events: none; }
+    #sidebar { transform: translateX(-110%); transition: transform .25s ease; }
+    body:has(#menu:checked) #sidebar { transform: translateX(0); }
+    #overlay { display: none; }
+    body:has(#menu:checked) #overlay { display: block; }
+    .khmer { display: none; }
+    .blue-button { background: #0052cc; transition: background .2s ease; }
+    .blue-button:hover { background: #0043a8; }
+    @media (min-width: 768px) { #sidebar { transform: translateX(0); position: sticky; } #overlay { display: none !important; } }
+  </style>
+</head>
+<body>
+  <input type="checkbox" id="menu">
+  <div class="min-h-screen flex flex-col">
+    <header class="h-[68px] sm:h-[76px] bg-white border-b border-gray-200 sticky top-0 z-50">
+      <div class="h-full px-3 sm:px-6 lg:px-8 flex items-center gap-2 sm:gap-4">
+        <label for="menu" class="md:hidden cursor-pointer p-2 rounded-lg hover:bg-gray-100 shrink-0" aria-label="Open navigation menu"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></label>
+        <a href="index.html" class="flex items-center shrink-0" aria-label="CampusPulse Student Community"><img src="/campus-pulse-logo.svg" alt="CampusPulse Student Community" class="h-12 sm:h-14 w-auto"></a>
+        <a id="auth-login-link" href="index.html#view-login" class="blue-button text-white ml-auto px-3.5 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap">Log In</a>
+      </div>
+    </header>
+    <div class="flex flex-1">
+      <div id="sidebar-mount"></div>
+      <div class="flex flex-1 min-w-0 flex-col">
+      <main class="flex-1 min-w-0 w-full max-w-xl mx-auto p-4 sm:p-6">
+    <div class="bg-white border border-gray-200 rounded-2xl p-5 sm:p-6 shadow-sm">
+      <h1 class="text-2xl font-bold mb-5">Create Campus Event</h1>
+      <form id="add-event-form" class="space-y-4">
+        <div><label for="event-title" class="block text-sm font-semibold mb-1">Event Title</label><input id="event-title" name="title" type="text" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm" placeholder="e.g. AI Seminar"></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><div><label for="event-date" class="block text-sm font-semibold mb-1">Date</label><input id="event-date" name="date" type="date" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm"></div><div><label for="event-time" class="block text-sm font-semibold mb-1">Time</label><input id="event-time" name="time" type="time" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm"></div></div>
+        <div><label for="event-location" class="block text-sm font-semibold mb-1">Location</label><input id="event-location" name="location" type="text" required class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm" placeholder="Campus Auditorium"></div>
+        <div><label for="event-description" class="block text-sm font-semibold mb-1">About the Event</label><textarea id="event-description" name="description" required rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-y" placeholder="Describe what attendees can expect..."></textarea></div>
+        <div><label for="event-image" class="block text-sm font-semibold mb-1">Event Image</label><input id="event-image" name="image" type="file" accept="image/*" class="w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-blue-700"><img id="event-image-preview" class="hidden w-full h-40 object-cover rounded-lg mt-3" alt="Selected event preview"></div>
+        <button id="event-submit-button" type="submit" class="w-full blue-button text-white font-semibold py-2.5 rounded-lg text-sm">Publish Event</button>
+      </form>
+    </div>
+      </main>
+      <div id="site-footer-mount" class="w-full"></div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

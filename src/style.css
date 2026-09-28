@@ -1,1 +1,50 @@
 @import "tailwindcss";
+
+.khmer {
+	font-family: "Kantumruy Pro", sans-serif;
+}
+
+.sidebar-link[aria-current="page"],
+.sidebar-link[aria-current="page"]:hover {
+	background: #eef5ff;
+	color: #0052cc;
+}
+
+.event-card {
+	position: relative;
+}
+
+.event-bookmark-button {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	z-index: 10;
+	display: flex;
+	width: 40px;
+	height: 40px;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid rgba(226, 232, 240, 0.9);
+	border-radius: 9999px;
+	background: rgba(255, 255, 255, 0.94);
+	color: #475569;
+	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.16);
+	transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.event-bookmark-button:hover {
+	transform: scale(1.06);
+	color: #0052cc;
+	background: #fff;
+}
+
+.event-bookmark-button.is-saved,
+.event-bookmark-button.is-saved:hover {
+	color: #0052cc;
+	background: #eff6ff;
+}
+
+.event-bookmark-button:focus-visible {
+	outline: 3px solid rgba(0, 82, 204, 0.3);
+	outline-offset: 2px;
+}
