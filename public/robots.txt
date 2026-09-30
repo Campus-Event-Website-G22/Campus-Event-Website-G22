@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://campus-event-website-g22.vercel.app/sitemap.xml
