@@ -352,7 +352,7 @@ function setupHeroCarousel() {
 			'./img/Rectangle 18.png',
 		]
 		const cardImages = Array.from(document.querySelectorAll<HTMLImageElement>('.event-card img')).map((image) => image.src)
-		images = [...new Set([...defaultHeroImages, ...cardImages])]
+		images = [...new Set([...defaultHeroImages, ...cardImages].map((image) => new URL(image, document.baseURI).href))]
 		heroSlideTrack.replaceChildren(...images.map((image) => {
 			const slide = document.createElement('div')
 			slide.className = 'hero-slide-image min-w-full h-full bg-cover bg-center'
