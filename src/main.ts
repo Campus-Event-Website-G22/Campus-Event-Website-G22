@@ -345,16 +345,13 @@ function setupHeroCarousel() {
 	refreshHeroCarousel = () => {
 		const currentImage = images[activeSlide]
 		const defaultHeroImages = [
-			'/img/Rectangle 87.png',
-			'/img/Rectangle 9.png',
-			'/img/Rectangle 12.png',
-			'/img/Rectangle 15.png',
-			'/img/Rectangle 18.png',
-			'/img/Orientation-Day.png',
-			'/img/Tech-Workshop.png',
-			'/img/Sport-Day.png',
+			'./img/Rectangle 87.png',
+			'./img/Rectangle 9.png',
+			'./img/Rectangle 12.png',
+			'./img/Rectangle 15.png',
+			'./img/Rectangle 18.png',
 		]
-		const cardImages = Array.from(document.querySelectorAll<HTMLImageElement>('#all-events-grid .event-card img')).map((image) => image.src)
+		const cardImages = Array.from(document.querySelectorAll<HTMLImageElement>('.event-card img')).map((image) => image.src)
 		images = [...new Set([...defaultHeroImages, ...cardImages])]
 		heroSlideTrack.replaceChildren(...images.map((image) => {
 			const slide = document.createElement('div')
@@ -763,7 +760,7 @@ addEventForm?.addEventListener('submit', async (event) => {
 		time: String(formData.get('time')),
 		location: String(formData.get('location')),
 		description: String(formData.get('description')),
-		image: imageFile ? await readImage(imageFile) : existingEvent?.image ?? '/img/Rectangle 87.png',
+		image: imageFile ? await readImage(imageFile) : existingEvent?.image ?? './img/Rectangle 87.png',
 	}
 
 	if (editingEventId) {
@@ -836,7 +833,7 @@ document.querySelectorAll<HTMLAnchorElement>('.favorite-event').forEach((favorit
 			time: favoriteButton.dataset.time ?? '',
 			location: favoriteButton.dataset.location ?? '',
 			description: `Join us for ${favoriteButton.dataset.title ?? 'this event'} at ${favoriteButton.dataset.location ?? 'campus'}. We look forward to seeing you there!`,
-			image: favoriteButton.dataset.image ?? '/img/Rectangle 87.png',
+			image: favoriteButton.dataset.image ?? './img/Rectangle 87.png',
 		}
 
 		if (!addToMyEvents(favoriteEvent)) return
